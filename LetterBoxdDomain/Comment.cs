@@ -9,6 +9,6 @@ namespace LetterBoxdDomain
 
         [MaxLength(50, ErrorMessage ="Comment cannot be longer than 50 charracters")]
         public required string Context { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 }

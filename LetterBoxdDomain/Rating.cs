@@ -9,6 +9,6 @@ namespace LetterBoxdDomain
 
         [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
         public int Score { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 }

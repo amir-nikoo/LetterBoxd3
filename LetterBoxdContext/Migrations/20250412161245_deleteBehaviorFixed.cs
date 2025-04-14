@@ -5,29 +5,18 @@
 namespace LetterBoxdContext.Migrations
 {
     /// <inheritdoc />
-    public partial class RequiredCommentContext : Migration
+    public partial class deleteBehaviorFixed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "Context",
-                table: "Comments",
-                type: "nvarchar(50)",
-                maxLength: 50,
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Comments_Users_UserId",
+                table: "Comments");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Ratings_UserId",
-                table: "Ratings",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comments_UserId",
-                table: "Comments",
-                column: "UserId");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Ratings_Users_UserId",
+                table: "Ratings");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Comments_Users_UserId",
@@ -57,22 +46,19 @@ namespace LetterBoxdContext.Migrations
                 name: "FK_Ratings_Users_UserId",
                 table: "Ratings");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Ratings_UserId",
-                table: "Ratings");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Comments_UserId",
-                table: "Comments");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Context",
+            migrationBuilder.AddForeignKey(
+                name: "FK_Comments_Users_UserId",
                 table: "Comments",
-                type: "nvarchar(max)",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
-                oldMaxLength: 50);
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Ratings_Users_UserId",
+                table: "Ratings",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id");
         }
     }
 }

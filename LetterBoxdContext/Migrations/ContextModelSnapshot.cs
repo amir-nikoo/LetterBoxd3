@@ -37,7 +37,7 @@ namespace LetterBoxdContext.Migrations
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -103,7 +103,7 @@ namespace LetterBoxdContext.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -147,8 +147,7 @@ namespace LetterBoxdContext.Migrations
                     b.HasOne("LetterBoxdDomain.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("LetterBoxdDomain.Rating", b =>
@@ -162,8 +161,7 @@ namespace LetterBoxdContext.Migrations
                     b.HasOne("LetterBoxdDomain.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("LetterBoxdDomain.Movie", b =>

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetterBoxdContext.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250409172111_RequiredCommentContext")]
-    partial class RequiredCommentContext
+    [Migration("20250412161245_deleteBehaviorFixed")]
+    partial class deleteBehaviorFixed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,7 @@ namespace LetterBoxdContext.Migrations
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -106,7 +106,7 @@ namespace LetterBoxdContext.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -150,8 +150,7 @@ namespace LetterBoxdContext.Migrations
                     b.HasOne("LetterBoxdDomain.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("LetterBoxdDomain.Rating", b =>
@@ -165,8 +164,7 @@ namespace LetterBoxdContext.Migrations
                     b.HasOne("LetterBoxdDomain.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("LetterBoxdDomain.Movie", b =>

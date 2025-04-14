@@ -10,8 +10,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-//dotnet ef migrations add RequiredCommentContext --startup-project ../LetterBoxd3 
-
 [Route("api")]
 [ApiController]
 public class Controller : ControllerBase

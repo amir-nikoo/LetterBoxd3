@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetterBoxdContext.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250226114738_RatingDefaultAdded")]
-    partial class RatingDefaultAdded
+    [Migration("20250414124308_firstPostDbDelete")]
+    partial class firstPostDbDelete
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,17 +34,20 @@ namespace LetterBoxdContext.Migrations
 
                     b.Property<string>("Context")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MovieId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -56,9 +59,6 @@ namespace LetterBoxdContext.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<float>("Rating")
-                        .HasColumnType("real");
 
                     b.Property<int>("ReleaseYear")
                         .HasColumnType("int");
@@ -75,21 +75,18 @@ namespace LetterBoxdContext.Migrations
                         new
                         {
                             Id = 1,
-                            Rating = 0f,
                             ReleaseYear = 2010,
                             Title = "Inception"
                         },
                         new
                         {
                             Id = 2,
-                            Rating = 0f,
                             ReleaseYear = 2014,
                             Title = "Interstellar"
                         },
                         new
                         {
                             Id = 3,
-                            Rating = 0f,
                             ReleaseYear = 2009,
                             Title = "Avatar"
                         });
@@ -109,10 +106,14 @@ namespace LetterBoxdContext.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Ratings");
                 });
@@ -125,8 +126,9 @@ namespace LetterBoxdContext.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Password")
-                        .HasColumnType("int");
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -139,18 +141,37 @@ namespace LetterBoxdContext.Migrations
 
             modelBuilder.Entity("LetterBoxdDomain.Comment", b =>
                 {
-                    b.HasOne("LetterBoxdDomain.Movie", "Movie")
+                    b.HasOne("LetterBoxdDomain.Movie", null)
                         .WithMany("Comments")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Movie");
+                    b.HasOne("LetterBoxdDomain.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("LetterBoxdDomain.Rating", b =>
+                {
+                    b.HasOne("LetterBoxdDomain.Movie", null)
+                        .WithMany("Ratings")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LetterBoxdDomain.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("LetterBoxdDomain.Movie", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }

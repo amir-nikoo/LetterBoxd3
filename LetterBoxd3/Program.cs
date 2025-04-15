@@ -1,4 +1,5 @@
-﻿using LetterBoxdContext;
+﻿using LetterBoxd3.Configurations;
+using LetterBoxdContext;
 using LetterBoxdDomain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -6,12 +7,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Manually build configuration
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .Build();
+
+// Apply the configuration to the builder
+builder.Configuration.AddConfiguration(configuration);
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -24,8 +33,31 @@ builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(connectionString)
 );
 
-// Get JWT settings
-var jwtSettings = builder.Configuration.GetSection("Jwt");
+// Debug: Print all configuration values to verify loading
+Console.WriteLine("All Configuration Values:");
+foreach (var config in builder.Configuration.AsEnumerable())
+{
+    Console.WriteLine($"{config.Key} = {config.Value}");
+}
+
+// Register JWT settings
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+
+// Get JWT settings - using direct configuration access
+var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+Console.WriteLine("\nJWT Configuration Values:");
+Console.WriteLine($"Key: {jwtKey}");
+Console.WriteLine($"Issuer: {jwtIssuer}");
+Console.WriteLine($"Audience: {jwtAudience}");
+
+// Validate JWT settings
+if (string.IsNullOrEmpty(jwtKey))
+{
+    throw new ApplicationException("JWT Key is missing in configuration. Please check your appsettings.json file.");
+}
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -33,16 +65,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateIssuer = !string.IsNullOrEmpty(jwtIssuer),
+            ValidateAudience = !string.IsNullOrEmpty(jwtAudience),
             ValidateLifetime = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
 
-// Add Swagger services
+// Configure Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
@@ -66,13 +98,12 @@ builder.Services.AddSwaggerGen(c =>
                     Id = "Bearer"
                 }
             },
-            new string[] { }
+            Array.Empty<string>()
         }
     });
 });
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-
 
 var app = builder.Build();
 

@@ -7,7 +7,7 @@ namespace LetterBoxdDomain
         public int Id { get; set; }
         public int MovieId { get; set; }
 
-        [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
+        [Range(1, 5)]
         public int Score { get; set; }
         public int? UserId { get; set; }
     }

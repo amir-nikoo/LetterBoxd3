@@ -10,6 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,30 +80,39 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Configure Swagger
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
-        In = ParameterLocation.Header,
-        Description = "Please enter token in the format: Bearer {your token}",
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        Title = "LetterBoxd API",
+        Version = "v1",
+        Description = "API for movie reviews and ratings",
+        Contact = new OpenApiContact { Name = "Your Name", Email = "your.email@example.com" }
     });
+
+    // Add JWT Authentication support in Swagger
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "JWT Authentication",
+        Description = "Enter JWT Bearer token **_only_**",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer", // must be lowercase
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
+        { securityScheme, Array.Empty<string>() }
     });
+
+    // Optional: Format the token input box
+    c.OperationFilter<SwaggerDefaultValues>(); // You'll need to create this filter
 });
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();

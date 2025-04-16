@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetterBoxdDomain
 {
@@ -7,8 +8,11 @@ namespace LetterBoxdDomain
         public int Id { get; set; }
         public int MovieId{ get; set; }
 
-        [MaxLength(50, ErrorMessage ="Comment cannot be longer than 50 charracters")]
+        [MaxLength(200)]
         public required string Context { get; set; }
         public int? UserId { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

@@ -9,6 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using LetterBoxd3.Configurations.Dtos;
+
+//authorization problem in swagger
 
 [Route("api")]
 [ApiController]
@@ -24,42 +27,8 @@ public class Controller : ControllerBase
         _configuration = configuration;
     }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] User user)
+    private string CreateToken(User user)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        
-        if (await _context.Users.AnyAsync(q => q.UserName == user.UserName))
-        {
-            return BadRequest("username already taken!");
-        }
-
-        user.PasswordHash = _passwordHasher.HashPassword(user, user.PasswordHash);
-
-        await _context.AddAsync(user);
-        await _context.SaveChangesAsync();
-
-        return Ok();
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] User user)
-    {
-        var targetAccount = await _context.Users.FirstOrDefaultAsync(q => q.UserName == user.UserName);
-        if (targetAccount == null)
-        {
-            return BadRequest("Invalid username or password.");
-        }
-
-        var result = _passwordHasher.VerifyHashedPassword(targetAccount, targetAccount.PasswordHash, user.PasswordHash);
-        if (result == PasswordVerificationResult.Failed)
-        {
-            return BadRequest("Invalid username or password.");
-        }
-
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
 
@@ -67,22 +36,61 @@ public class Controller : ControllerBase
         {
             Subject = new ClaimsIdentity(new[]
             {
-            new Claim(ClaimTypes.Name, targetAccount.UserName),
-            new Claim(ClaimTypes.NameIdentifier, targetAccount.Id.ToString())
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         }),
-            Expires = DateTime.UtcNow.AddHours(1), // Token expiration time
+            Expires = DateTime.UtcNow.AddHours(1),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
         };
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var tokenString = tokenHandler.WriteToken(token);
-
-        return Ok(new { Token = tokenString });
+        return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
     }
 
 
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] UserDto userDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
+        if (await _context.Users.AnyAsync(q => q.UserName == userDto.UserName))
+        {
+            return BadRequest("username already taken!");
+        }
+
+        var user = new User
+        {
+            UserName = userDto.UserName,
+            PasswordHash = _passwordHasher.HashPassword(null, userDto.Password)
+        };
+
+        await _context.AddAsync(user);
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] UserDto userDto)
+    {
+        var targetAccount = await _context.Users.FirstOrDefaultAsync(q => q.UserName == userDto.UserName);
+        if (targetAccount == null ||
+        _passwordHasher.VerifyHashedPassword(targetAccount, targetAccount.PasswordHash, userDto.Password)
+        != PasswordVerificationResult.Success)
+        {
+            return BadRequest("Invalid username or password.");
+        }
+
+        var tokenString = CreateToken(targetAccount);
+        return Ok(new { Token = tokenString });
+    }
+
+    
     [HttpGet("movies")]
     public async Task<IActionResult> GetMovies()
     {
@@ -97,6 +105,7 @@ public class Controller : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("movies/{id:int}")]
     public async Task<IActionResult> GetById([FromRoute]int id)
     {
@@ -114,48 +123,55 @@ public class Controller : ControllerBase
         }
     }
 
-    
+    [Authorize]
     [HttpPost("movies/{movieId:int}/comments")]
-    public async Task<IActionResult> PostComment([FromRoute] int movieId, [FromBody] Comment comment)
+    public async Task<IActionResult> PostComment([FromRoute] int movieId, [FromBody] CommentDto commentDto)
     {
-        //don't forget to add the attributes like required to the comment modeling
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
-        var movie = await _context.Movies
-            .Include(m => m.Comments)
-            .Include(m => m.Ratings)
-            .FirstOrDefaultAsync(m => m.Id == movieId);
+        var movie = await _context.Movies.FindAsync(movieId);
         if (movie == null)
         {
             return NotFound();
         }
-        comment.MovieId = movieId;
-        await _context.Comments.AddAsync(comment);
+        var newComment = new Comment
+        {
+            MovieId = movieId,
+            Context = commentDto.Context
+        };
+
+        await _context.AddAsync(newComment);
         await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new { id = movieId }, movie);
+        return Created($"movies/{movieId}/comments/{newComment.Id}", newComment);
     }
 
-    
+    [Authorize]
     [HttpPatch("movies/{movieId:int}/comments/{commentId:int}")]
-    public async Task<IActionResult> EditComment(int commentId, [FromBody] Comment newComment)
+    public async Task<IActionResult> EditComment(int commentId, [FromBody] CommentDto commentDto)
     {
-        if (newComment == null || !ModelState.IsValid)
-        {
-            return BadRequest();
-        }
         var targetComment = await _context.Comments.FindAsync(commentId);
         if (targetComment == null)
         {
             return NotFound();
         }
-        targetComment.Context = newComment.Context;
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (targetComment.UserId != int.Parse(userId))
+            return Forbid();
+
+        if (commentDto.Context == null || !ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+        
+        targetComment.Context = commentDto.Context;
         await _context.SaveChangesAsync();
         return Ok();
     }
 
-    
+    [Authorize]
     [HttpDelete("movies/{movieId:int}/comments/{commentId:int}")]
     public async Task<IActionResult> DeleteComment(int commentId)
     {
@@ -165,44 +181,57 @@ public class Controller : ControllerBase
             return NotFound();
         }
 
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (targetComment.UserId != int.Parse(userId))
+            return Forbid();
+
         _context.Remove(targetComment);
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
-    
+    [Authorize]
     [HttpPost("movies/{movieId:int}/rating")]
-    public async Task<IActionResult> PostRating(int movieId,[FromBody] Rating rating)
+    public async Task<IActionResult> PostRating(int movieId,[FromBody] RatingDto ratingDto)
     {
-        if (rating == null || !ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        await _context.Ratings.AddAsync(rating);
-        await _context.SaveChangesAsync();
+        var newRating = new Rating
+        {
+            MovieId = movieId,
+            Score = ratingDto.Score
+        };
 
-        return CreatedAtAction(nameof(GetById), new { Id = movieId });
+        await _context.Ratings.AddAsync(newRating);
+        await _context.SaveChangesAsync();
+        return Created($"movies/{movieId}/rating/{newRating.Id}", newRating);
     }
 
-    
+    [Authorize]
     [HttpPatch("movies/{movieId:int}/rating/{ratingId:int}")]
-    public async Task<IActionResult> editRating(int ratingId, [FromBody] Rating rating)
+    public async Task<IActionResult> EditRating(int ratingId, [FromBody] RatingDto ratingDto)
     {
-        if (rating == null || !ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
         var targetRating = await _context.Ratings.FindAsync(ratingId);
         if (targetRating == null)
         {
             return NotFound();
         }
 
-        targetRating.Score = rating.Score;
-        await _context.SaveChangesAsync();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (targetRating.UserId != int.Parse(userId))
+            return Forbid();
 
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        targetRating.Score = ratingDto.Score;
+        await _context.SaveChangesAsync();
         return Ok();
     }
 }

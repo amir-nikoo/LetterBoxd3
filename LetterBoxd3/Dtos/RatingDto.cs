@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LetterBoxd3.Configurations.Dtos
+namespace LetterBoxd3.Dtos
 {
     public class RatingDto
     {

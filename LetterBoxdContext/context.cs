@@ -53,7 +53,7 @@ namespace LetterBoxdContext
 
 
             modelBuilder.Entity<Comment>()
-            .HasOne<User>()
+            .HasOne(c => c.User)
             .WithMany()
             .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.SetNull);

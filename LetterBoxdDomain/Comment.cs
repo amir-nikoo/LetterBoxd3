@@ -9,10 +9,11 @@ namespace LetterBoxdDomain
         public int MovieId{ get; set; }
 
         [MaxLength(200)]
-        public required string Context { get; set; }
+        public required string Text { get; set; }
         public int? UserId { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public virtual User? User { get; set; }
     }
 }

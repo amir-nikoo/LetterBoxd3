@@ -9,9 +9,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using LetterBoxd3.Configurations.Dtos;
+using LetterBoxd3.Dtos;
+using System.ComponentModel;
 
-//authorization problem in swagger
+//to git the commentDto changes and added Comment a User navigation propertt
 
 [Route("api")]
 [ApiController]
@@ -55,14 +56,10 @@ public class Controller : ControllerBase
     public async Task<IActionResult> Register([FromBody] UserDto userDto)
     {
         if (!ModelState.IsValid)
-        {
             return BadRequest(ModelState);
-        }
         
         if (await _context.Users.AnyAsync(q => q.UserName == userDto.UserName))
-        {
             return BadRequest("username already taken!");
-        }
 
         var user = new User
         {
@@ -94,25 +91,23 @@ public class Controller : ControllerBase
     [HttpGet("movies")]
     public async Task<IActionResult> GetMovies()
     {
-        try
+        var movies = await _context.Movies
+        .Select(m => new
         {
-            var movies = await _context.Movies.ToListAsync();
-            return Ok(movies);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+            m.Id,
+            m.ImageUrl,
+            m.Title
+        })
+        .ToListAsync();
+        return Ok(movies);
     }
 
-    [Authorize]
+
     [HttpGet("movies/{id:int}")]
     public async Task<IActionResult> GetById([FromRoute]int id)
     {
-        var targetMovie = await _context.Movies
-            .Include(m => m.Ratings)
-            .Include(m => m.Comments)
-            .FirstOrDefaultAsync(j => j.Id == id);
+        var targetMovie = await GetMovieWithDetails(id);
+
         if (targetMovie == null)
         {
             return NotFound();
@@ -123,115 +118,149 @@ public class Controller : ControllerBase
         }
     }
 
-    [Authorize]
-    [HttpPost("movies/{movieId:int}/comments")]
-    public async Task<IActionResult> PostComment([FromRoute] int movieId, [FromBody] CommentDto commentDto)
+    private int GetCurrentUserId()
     {
-        if (!ModelState.IsValid)
+        return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+    }
+
+    private async Task<MovieDto> GetMovieWithDetails(int movieId)
+    {
+        var movie = await _context.Movies
+        .Include(m => m.Comments)
+            .ThenInclude(c => c.User)
+        .Include(m => m.Ratings)
+        .FirstOrDefaultAsync(m => m.Id == movieId);
+
+        return new MovieDto
         {
+            Id = movie.Id,
+            ImageUrl = movie.ImageUrl,
+            Title = movie.Title,
+            ReleaseYear = movie.ReleaseYear,
+            Description = movie.Description,
+            Ratings = movie.Ratings,
+            Comments = movie.Comments.Select(c => new CommentGetDto
+            {
+                Id = c.Id,
+                Text = c.Text,
+                Username = c.User?.UserName ?? "Deleted"
+            }).ToList()
+        };
+    }
+
+    
+    [HttpPost("movies/{movieId:int}/comments")]
+    public async Task<IActionResult> PostComment([FromRoute] int movieId, [FromBody] CommentPostDto commentPostDto)
+    {
+        var userId = GetCurrentUserId();
+        var commentExists = await _context.Comments.AnyAsync(c => c.MovieId == movieId && c.UserId == userId);
+        if (commentExists)
+            return Forbid();
+
+        if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        }
+
         var movie = await _context.Movies.FindAsync(movieId);
         if (movie == null)
-        {
             return NotFound();
-        }
+
         var newComment = new Comment
         {
             MovieId = movieId,
-            Context = commentDto.Context
+            Text = commentPostDto.Text,
+            UserId = userId
         };
 
         await _context.AddAsync(newComment);
         await _context.SaveChangesAsync();
-        return Created($"movies/{movieId}/comments/{newComment.Id}", newComment);
+
+        return Ok(await GetMovieWithDetails(movieId));  
     }
 
-    [Authorize]
+    
     [HttpPatch("movies/{movieId:int}/comments/{commentId:int}")]
-    public async Task<IActionResult> EditComment(int commentId, [FromBody] CommentDto commentDto)
+    public async Task<IActionResult> EditComment([FromRoute] int movieId, int commentId, [FromBody] CommentPostDto commentPostDto)
     {
         var targetComment = await _context.Comments.FindAsync(commentId);
         if (targetComment == null)
-        {
             return NotFound();
-        }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (targetComment.UserId != int.Parse(userId))
+        if (targetComment.UserId != GetCurrentUserId())
             return Forbid();
 
-        if (commentDto.Context == null || !ModelState.IsValid)
-        {
-            return BadRequest();
-        }
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
         
-        targetComment.Context = commentDto.Context;
+        targetComment.Text = commentPostDto.Text;
         await _context.SaveChangesAsync();
-        return Ok();
+
+        return Ok(await GetMovieWithDetails(movieId));
     }
 
-    [Authorize]
+    
     [HttpDelete("movies/{movieId:int}/comments/{commentId:int}")]
-    public async Task<IActionResult> DeleteComment(int commentId)
+    public async Task<IActionResult> DeleteComment([FromRoute] int movieId, int commentId)
     {
         var targetComment = await _context.Comments.FindAsync(commentId);
         if (targetComment == null)
-        {
             return NotFound();
-        }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (targetComment.UserId != int.Parse(userId))
+        if (targetComment.UserId != GetCurrentUserId())
             return Forbid();
 
         _context.Remove(targetComment);
         await _context.SaveChangesAsync();
 
-        return NoContent();
+        return Ok(await GetMovieWithDetails(movieId));
     }
 
-    [Authorize]
+    
     [HttpPost("movies/{movieId:int}/rating")]
     public async Task<IActionResult> PostRating(int movieId,[FromBody] RatingDto ratingDto)
     {
+        var userId = GetCurrentUserId();
+        var ratingExists = await _context.Ratings.AnyAsync(r => r.MovieId == movieId && r.UserId == userId);
+
+        if (ratingExists)
+            return Forbid();
+
         if (!ModelState.IsValid)
-        {
             return BadRequest(ModelState);
-        }
+
+        var movie = await _context.Movies.FindAsync(movieId);
+        if (movie == null)
+            return NotFound();
 
         var newRating = new Rating
         {
             MovieId = movieId,
-            Score = ratingDto.Score
+            Score = ratingDto.Score,
+            UserId = userId
         };
 
         await _context.Ratings.AddAsync(newRating);
         await _context.SaveChangesAsync();
-        return Created($"movies/{movieId}/rating/{newRating.Id}", newRating);
+
+        return Ok(await GetMovieWithDetails(movieId));
     }
 
-    [Authorize]
+    
     [HttpPatch("movies/{movieId:int}/rating/{ratingId:int}")]
-    public async Task<IActionResult> EditRating(int ratingId, [FromBody] RatingDto ratingDto)
+    public async Task<IActionResult> EditRating([FromRoute] int movieId, int ratingId, [FromBody] RatingDto ratingDto)
     {
         var targetRating = await _context.Ratings.FindAsync(ratingId);
         if (targetRating == null)
-        {
             return NotFound();
-        }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (targetRating.UserId != int.Parse(userId))
+        if (targetRating.UserId != GetCurrentUserId())
             return Forbid();
 
         if (!ModelState.IsValid)
-        {
             return BadRequest(ModelState);
-        }
 
         targetRating.Score = ratingDto.Score;
         await _context.SaveChangesAsync();
-        return Ok();
+
+        return Ok(await GetMovieWithDetails(movieId));
     }
 }

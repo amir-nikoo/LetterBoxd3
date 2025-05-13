@@ -1,4 +1,5 @@
-﻿using LetterBoxd3.Dtos;
+﻿using Humanizer;
+using LetterBoxd3.Dtos;
 using LetterBoxd3.Interfaces;
 using LetterBoxdContext;
 using Microsoft.AspNetCore.Mvc;
@@ -59,8 +60,9 @@ namespace LetterBoxd3.Services
                 Comments = movie.Comments.Select(c => new CommentGetDto
                 {
                     Id = c.Id,
+                    Username = c.User?.UserName ?? "Deleted",
                     Text = c.Text,
-                    Username = c.User?.UserName ?? "Deleted"
+                    TimeAgo = c.CreatedAt.Humanize()
                 }).ToList()
             };
         }

@@ -4,7 +4,8 @@ using System.Security.Claims;
 using LetterBoxd3.Dtos;
 using LetterBoxd3.Interfaces;
 
-//dar hal e ezafe kardan e word filtering hastam
+//dependency injection
+//filtering done! finding error holes then getting a front end
 
 [Route("api")]
 [ApiController]

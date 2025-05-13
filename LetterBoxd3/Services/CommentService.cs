@@ -18,7 +18,7 @@ namespace LetterBoxd3.Services
         {
             _context = context;
             _movieService = movieService;
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "banned_words.txt");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Configurations", "banned_words.txt");
             if (File.Exists(path))
             {
                 _bannedWords = File.ReadAllLines(path)
@@ -34,9 +34,27 @@ namespace LetterBoxd3.Services
 
         public bool ContainsBannedWord(string comment)
         {
-            var words = comment.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            return words.Any(w => _bannedWords.Contains(w));
+            if (string.IsNullOrWhiteSpace(comment))
+                return false;
+
+            var normalized = new string(comment
+                .Where(c => char.IsLetter(c) || char.IsWhiteSpace(c))
+                .ToArray())
+                .ToLower();
+
+            var compact = new string(normalized
+                .Where(c => char.IsLetter(c))
+                .ToArray());
+
+            foreach (var bannedWord in _bannedWords)
+            {
+                if (normalized.Contains(bannedWord) || compact.Contains(bannedWord))
+                    return true;
+            }
+
+            return false;
         }
+
 
         public async Task<IActionResult> PostComment(int movieId, int userId, CommentPostDto commentPostDto)
         {
@@ -58,7 +76,7 @@ namespace LetterBoxd3.Services
                 UserId = userId
             };
 
-            await _context.AddAsync(newComment);
+            await _context.Comments.AddAsync(newComment);
             await _context.SaveChangesAsync();
 
             return new OkObjectResult(await _movieService.GetMovieWithDetails(movieId));
@@ -71,6 +89,9 @@ namespace LetterBoxd3.Services
                 return new NotFoundResult();
 
             if (targetComment.UserId != userId)
+                return new ForbidResult();
+
+            if (ContainsBannedWord(commentPostDto.Text))
                 return new ForbidResult();
 
             targetComment.Text = commentPostDto.Text;

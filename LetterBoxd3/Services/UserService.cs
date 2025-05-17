@@ -47,10 +47,10 @@ namespace LetterBoxd3.Services
 
             return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
         }
-        public async Task<IActionResult> Register(UserDto userDto)
+        public async Task<ServiceResult<bool>> Register(UserDto userDto)
         {
             if (await _context.Users.AnyAsync(q => q.UserName == userDto.UserName))
-                return new BadRequestObjectResult("username already taken!");
+                return ServiceResult<bool>.Fail(400, "This username is taken.");
 
             var user = new User
             {
@@ -60,21 +60,21 @@ namespace LetterBoxd3.Services
 
             await _context.AddAsync(user);
             await _context.SaveChangesAsync();
-            return new OkResult();
+            return ServiceResult<bool>.Successful(true);
         }
 
-        public async Task<IActionResult> Login(UserDto userDto)
+        public async Task<ServiceResult<LoginResultDto>> Login(UserDto userDto)
         {
             var targetAccount = await _context.Users.FirstOrDefaultAsync(q => q.UserName == userDto.UserName);
             if (targetAccount == null ||
             _passwordHasher.VerifyHashedPassword(targetAccount, targetAccount.PasswordHash, userDto.Password)
             != PasswordVerificationResult.Success)
             {
-                return new BadRequestResult();
+                return ServiceResult<LoginResultDto>.Fail(400, "Username or password is incorrect.");
             }
 
             var tokenString = CreateToken(targetAccount);
-            return new OkObjectResult(new { Token = tokenString });
+            return ServiceResult<LoginResultDto>.Successful(new LoginResultDto {Token = tokenString});
         }
     }
 }

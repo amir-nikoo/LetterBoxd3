@@ -17,16 +17,16 @@ namespace LetterBoxd3.Services
             _movieService = movieService;
         }
         
-        public async Task<IActionResult> PostRating(int movieId, int userId, RatingDto ratingDto)
+        public async Task<ServiceResult<MovieDto>> PostRating(int movieId, int userId, RatingDto ratingDto)
         {
             var ratingExists = await _context.Ratings.AnyAsync(r => r.MovieId == movieId && r.UserId == userId);
 
             if (ratingExists)
-                return new ForbidResult();
+                return ServiceResult<MovieDto>.Fail(403, "Can't rate a movie more than once. Try editing your rating.");
 
             var movie = await _context.Movies.FindAsync(movieId);
             if (movie == null)
-                return new NotFoundResult();
+                return ServiceResult<MovieDto>.Fail(404, "Movie not found.");
 
             var newRating = new Rating
             {
@@ -38,22 +38,22 @@ namespace LetterBoxd3.Services
             await _context.Ratings.AddAsync(newRating);
             await _context.SaveChangesAsync();
 
-            return new OkObjectResult(await _movieService.GetMovieWithDetails(movieId));
+            return ServiceResult<MovieDto>.Successful(await _movieService.GetMovieWithDetails(movieId));
         }
 
-        public async Task<IActionResult> EditRating(int movieId, int userId, int ratingId, RatingDto ratingDto)
+        public async Task<ServiceResult<MovieDto>> EditRating(int movieId, int userId, int ratingId, RatingDto ratingDto)
         {
             var targetRating = await _context.Ratings.FindAsync(ratingId);
             if (targetRating == null)
-                return new NotFoundResult();
+                return ServiceResult<MovieDto>.Fail(404, "Rating not found.");
 
             if (targetRating.UserId != userId)
-                return new ForbidResult();
+                return ServiceResult<MovieDto>.Fail(403, "This rating belongs to another user.");
 
             targetRating.Score = ratingDto.Score;
             await _context.SaveChangesAsync();
 
-            return new OkObjectResult(await _movieService.GetMovieWithDetails(movieId));
+            return ServiceResult<MovieDto>.Successful(await _movieService.GetMovieWithDetails(movieId));
         }
     }
 }

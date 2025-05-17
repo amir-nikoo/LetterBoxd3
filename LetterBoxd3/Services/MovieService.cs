@@ -2,6 +2,7 @@
 using LetterBoxd3.Dtos;
 using LetterBoxd3.Interfaces;
 using LetterBoxdContext;
+using LetterBoxdDomain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,40 +15,41 @@ namespace LetterBoxd3.Services
         {
             _context = context;
         }
-        public async Task<IActionResult> GetMovies()
+        public async Task<ServiceResult<List<MoviesPreviewDto>>> GetMovies()
         {
             var movies = await _context.Movies
-            .Select(m => new
+            .Select(m => new MoviesPreviewDto
             {
-                m.Id,
-                m.ImageUrl,
-                m.Title
+                Id = m.Id,
+                ImageUrl = m.ImageUrl,
+                Title = m.Title
             })
             .ToListAsync();
-            return new OkObjectResult(movies);
+            return ServiceResult<List<MoviesPreviewDto>>.Successful(movies);
         }
 
-        public async Task<IActionResult> GetById(int id)
+        public async Task<ServiceResult<MovieDto>> GetById(int id)
         {
             var targetMovie = await GetMovieWithDetails(id);
 
             if (targetMovie == null)
             {
-                return new NotFoundResult();
+                return ServiceResult<MovieDto>.Fail(404, "Movie not found.");
             }
-            else
-            {
-                return new OkObjectResult(targetMovie);
-            }
+
+            return ServiceResult<MovieDto>.Successful(targetMovie);
         }
 
         public async Task<MovieDto> GetMovieWithDetails(int movieId)
         {
             var movie = await _context.Movies
-        .Include(m => m.Comments)
+            .Include(m => m.Comments)
             .ThenInclude(c => c.User)
-        .Include(m => m.Ratings)
-        .FirstOrDefaultAsync(m => m.Id == movieId);
+            .Include(m => m.Ratings)
+            .FirstOrDefaultAsync(m => m.Id == movieId);
+
+            if (movie == null)
+                return null;
 
             return new MovieDto
             {

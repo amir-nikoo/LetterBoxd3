@@ -1,16 +1,33 @@
-﻿namespace LetterBoxd3.Services
+﻿using LetterBoxd3.Dtos;
+using LetterBoxdDomain;
+
+namespace LetterBoxd3.Services
 {
-    public class ServiceResult
+    public class ServiceResult<T>
     {
         public bool Success { get; set; }
-        public enum Result
+        public int StatusCode { get; set; }
+        public string? ErrorMessage { get; set; }
+        public T Data { get; set; }
+
+        static public ServiceResult<T> Fail(int statusCode, string errorMessage)
         {
-            notFound,
-            alreadyHas,
-            badWord,
-            badReq
+            return new ServiceResult<T>()
+            {
+                Success = false,
+                StatusCode = statusCode,
+                ErrorMessage = errorMessage
+            };
         }
 
-        public string ErrorMessage { get; set; }
+        static public ServiceResult<T> Successful(T data)
+        {
+            return new ServiceResult<T>()
+            {
+                Success = true,
+                StatusCode = 200,
+                Data = data
+            };
+        }
     }
 }

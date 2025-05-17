@@ -5,6 +5,7 @@ using LetterBoxdDomain;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using LetterBoxd3.Services;
 
 namespace LetterBoxd3.Services
 {
@@ -56,18 +57,19 @@ namespace LetterBoxd3.Services
         }
 
 
-        public async Task<IActionResult> PostComment(int movieId, int userId, CommentPostDto commentPostDto)
+        public async Task<ServiceResult<MovieDto>> PostComment(int movieId, int userId, CommentPostDto commentPostDto)
         {
+
             var commentExists = await _context.Comments.AnyAsync(c => c.MovieId == movieId && c.UserId == userId);
             if (commentExists)
-                return new ForbidResult();
+                return ServiceResult<MovieDto>.Fail(403, "Can't post more than one comment. Try editing your comment.");
 
             var movie = await _context.Movies.FindAsync(movieId);
             if (movie == null)
-                return new NotFoundResult();
+                return ServiceResult<MovieDto>.Fail(404, "Movie not found.");
 
             if (ContainsBannedWord(commentPostDto.Text))
-                return new ForbidResult();
+                return ServiceResult<MovieDto>.Fail(403, "The comment contains inappropriate content.");
 
             var newComment = new Comment
             {
@@ -79,40 +81,41 @@ namespace LetterBoxd3.Services
             await _context.Comments.AddAsync(newComment);
             await _context.SaveChangesAsync();
 
-            return new OkObjectResult(await _movieService.GetMovieWithDetails(movieId));
+            return ServiceResult<MovieDto>.Successful(await _movieService.GetMovieWithDetails(movieId));
         }
 
-        public async Task<IActionResult> EditComment(int movieId, int commentId, int userId, CommentPostDto commentPostDto)
+        public async Task<ServiceResult<MovieDto>> EditComment(int movieId, int commentId, int userId, CommentPostDto commentPostDto)
         {
             var targetComment = await _context.Comments.FindAsync(commentId);
             if (targetComment == null)
-                return new NotFoundResult();
+                return ServiceResult<MovieDto>.Fail(404, "Comment not found.");
 
             if (targetComment.UserId != userId)
-                return new ForbidResult();
+                return ServiceResult<MovieDto>.Fail(403, "This comment belongs to another user.");
 
             if (ContainsBannedWord(commentPostDto.Text))
-                return new ForbidResult();
+                return ServiceResult<MovieDto>.Fail(403, "Comment contains inappropriate content.");
 
             targetComment.Text = commentPostDto.Text;
             await _context.SaveChangesAsync();
 
-            return new OkObjectResult(await _movieService.GetMovieWithDetails(movieId));
+            return ServiceResult<MovieDto>.Successful(await _movieService.GetMovieWithDetails(movieId));
         }
 
-        public async Task<IActionResult> DeleteComment(int movieId, int commentId, int userId)
+        public async Task<ServiceResult<MovieDto>> DeleteComment(int movieId, int commentId, int userId)
         {
             var targetComment = await _context.Comments.FindAsync(commentId);
             if (targetComment == null)
-                return new NotFoundResult();
+                return ServiceResult<MovieDto>.Fail(404, "Comment not found.");
 
             if (targetComment.UserId != userId)
-                return new ForbidResult();
+                return ServiceResult<MovieDto>.Fail(403, "This comment belongs to another user.");
 
             _context.Remove(targetComment);
             await _context.SaveChangesAsync();
 
-            return new OkObjectResult(await _movieService.GetMovieWithDetails(movieId));
+            return ServiceResult<MovieDto>.Successful(await _movieService.GetMovieWithDetails(movieId));
         }
+
     }
 }

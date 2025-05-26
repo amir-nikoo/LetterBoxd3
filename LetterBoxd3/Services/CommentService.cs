@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LetterBoxd3.Services;
+using Humanizer;
 
 namespace LetterBoxd3.Services
 {
@@ -56,13 +57,35 @@ namespace LetterBoxd3.Services
             return false;
         }
 
+        public async Task<ServiceResult<List<CommentGetDto>>> GetComments([FromRoute] int movieId)
+        {
+            var targetMovie = await _context.Movies
+                .Include(m => m.Comments)
+                .ThenInclude(c => c.User)
+                .FirstOrDefaultAsync(m => m.Id == movieId);
+
+            if (targetMovie == null)
+            {
+                return ServiceResult<List<CommentGetDto>>.Fail(404, "Movie not found.");
+            }
+
+            var comments = targetMovie.Comments.Select(c => new CommentGetDto
+            {
+                Id = c.Id,
+                Username = c.User?.UserName ?? "Deleted",
+                Text = c.Text,
+                TimeAgo = c.CreatedAt.Humanize()
+            }).ToList();
+
+            return ServiceResult<List<CommentGetDto>>.Successful(comments);
+        }
 
         public async Task<ServiceResult<MovieDto>> PostComment(int movieId, int userId, CommentPostDto commentPostDto)
         {
 
             var commentExists = await _context.Comments.AnyAsync(c => c.MovieId == movieId && c.UserId == userId);
             if (commentExists)
-                return ServiceResult<MovieDto>.Fail(403, "Can't post more than one comment. Try editing your comment.");
+                return ServiceResult<MovieDto>.Fail(403, "Can't post more than one comment. Try editing the comment you already posted.");
 
             var movie = await _context.Movies.FindAsync(movieId);
             if (movie == null)

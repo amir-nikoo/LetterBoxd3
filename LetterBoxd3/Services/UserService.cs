@@ -74,7 +74,7 @@ namespace LetterBoxd3.Services
             }
 
             var tokenString = CreateToken(targetAccount);
-            return ServiceResult<LoginResultDto>.Successful(new LoginResultDto {Token = tokenString});
+            return ServiceResult<LoginResultDto>.Successful(new LoginResultDto { Token = tokenString, Username = targetAccount.UserName });
         }
     }
 }

@@ -22,7 +22,7 @@ namespace LetterBoxd3.Services
             var ratingExists = await _context.Ratings.AnyAsync(r => r.MovieId == movieId && r.UserId == userId);
 
             if (ratingExists)
-                return ServiceResult<MovieDto>.Fail(403, "Can't rate a movie more than once. Try editing your rating.");
+                return ServiceResult<MovieDto>.Fail(403, "Can't rate a movie more than once. Try editing the rating you already made.");
 
             var movie = await _context.Movies.FindAsync(movieId);
             if (movie == null)
@@ -41,14 +41,11 @@ namespace LetterBoxd3.Services
             return ServiceResult<MovieDto>.Successful(await _movieService.GetMovieWithDetails(movieId));
         }
 
-        public async Task<ServiceResult<MovieDto>> EditRating(int movieId, int userId, int ratingId, RatingDto ratingDto)
+        public async Task<ServiceResult<MovieDto>> EditRating(int movieId, int userId, RatingDto ratingDto)
         {
-            var targetRating = await _context.Ratings.FindAsync(ratingId);
+            var targetRating = await _context.Ratings.FirstOrDefaultAsync(r => r.MovieId == movieId && r.UserId == userId);
             if (targetRating == null)
                 return ServiceResult<MovieDto>.Fail(404, "Rating not found.");
-
-            if (targetRating.UserId != userId)
-                return ServiceResult<MovieDto>.Fail(403, "This rating belongs to another user.");
 
             targetRating.Score = ratingDto.Score;
             await _context.SaveChangesAsync();

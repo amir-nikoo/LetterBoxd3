@@ -1,0 +1,155 @@
+<!-- File: register.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - LetterBoxd3</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #101010;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #1f1f1f;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #e50914;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #c40812;
+            }
+
+        .message {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .link {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+            .link a {
+                color: #1db954;
+                text-decoration: none;
+            }
+
+                .link a:hover {
+                    text-decoration: underline;
+                }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <button onclick="register()">Sign Up</button>
+        <div class="message" id="message"></div>
+        <div class="link">
+            Already have an account? <a href="login.html">Login</a>
+        </div>
+    </div>
+
+    <script>
+        async function register() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const messageEl = document.getElementById("message");
+            messageEl.textContent = "";
+            messageEl.style.color = "red";
+
+            if (!username || !password) {
+                messageEl.textContent = "Username and password are required.";
+                return;
+            }
+
+            if (username.length > 20) {
+                messageEl.textContent = "Username must not be more than 20 characters.";
+                return;
+            }
+
+            if (password.length < 8) {
+                messageEl.textContent = "Password must be at least 8 characters long.";
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:5000/api/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ UserName: username, Password: password })
+                });
+
+                if (!response.ok) {
+                    const contentType = response.headers.get("content-type") || "";
+                    if (contentType.includes("application/json")) {
+                        const errorData = await response.json();
+                        if (errorData.errors) {
+                            const messages = Object.entries(errorData.errors)
+                                .map(([field, msgs]) => `${field}: ${msgs.join(" ")}`)
+                                .join("\n");
+                            messageEl.textContent = messages;
+                        } else {
+                            messageEl.textContent = errorData.message || "Registration failed.";
+                        }
+                    } else {
+                        const errorText = await response.text();
+                        messageEl.textContent = errorText || "Registration failed.";
+                    }
+                    return;
+                }
+
+                messageEl.textContent = "Registration successful! Redirecting to login...";
+                messageEl.style.color = "lightgreen";
+                setTimeout(() => window.location.href = "login.html", 2000);
+
+            } catch (err) {
+                messageEl.textContent = "Something went wrong. Please try again.";
+            }
+        }
+    </script>
+
+
+
+</body>
+</html>

@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿    using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using LetterBoxd3.Dtos;
 using LetterBoxd3.Interfaces;
-using LetterBoxd3.Services;
 
 //dependency injection
-//filtering done! finding error holes then getting a front end
+//getting a front end
 
 [Route("api")]
 [ApiController]
@@ -72,6 +71,20 @@ public class LetterboxdController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("movies/{movieId:int}/comments")]
+    public async Task<IActionResult> GetComments([FromRoute] int movieId)
+    {
+        var response = await _commentService.GetComments(movieId);
+        
+        if (!response.Success)
+        {
+            return NotFound(response.ErrorMessage);
+        }
+
+        return Ok(response.Data);
+    }
+
+    [Authorize]
     [HttpPost("movies/{movieId:int}/comments")]
     public async Task<IActionResult> PostComment([FromRoute] int movieId, [FromBody] CommentPostDto commentPostDto)
     {
@@ -130,7 +143,7 @@ public class LetterboxdController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("movies/{movieId:int}/rating")]
+    [HttpPost("movies/{movieId:int}/ratings")]
     public async Task<IActionResult> PostRating(int movieId,[FromBody] RatingDto ratingDto)
     {
         var userId = GetCurrentUserId();
@@ -149,20 +162,14 @@ public class LetterboxdController : ControllerBase
     }
 
     [Authorize]
-    [HttpPatch("movies/{movieId:int}/rating/{ratingId:int}")]
-    public async Task<IActionResult> EditRating([FromRoute] int movieId, int ratingId, [FromBody] RatingDto ratingDto)
+    [HttpPatch("movies/{movieId:int}/ratings")]
+    public async Task<IActionResult> EditRating([FromRoute] int movieId, [FromBody] RatingDto ratingDto)
     {
         int userId = GetCurrentUserId();
-        var response = await _ratingService.EditRating(movieId, userId, ratingId, ratingDto);
+        var response = await _ratingService.EditRating(movieId, userId, ratingDto);
         if (!response.Success)
         {
-            switch (response.StatusCode)
-            {
-                case 404:
-                    return NotFound(response.ErrorMessage);
-                case 403:
-                    return StatusCode(403, response.ErrorMessage);
-            }
+            return NotFound(response.ErrorMessage);
         }
         return Ok(response.Data);
     }

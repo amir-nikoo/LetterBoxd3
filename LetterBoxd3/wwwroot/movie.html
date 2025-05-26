@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Movie Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            background: #f9f9f9;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        #logout-btn {
+            margin: 1rem 0;
+            padding: 0.5rem 1rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .movie-info {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .comments, .add-comment, .rating-section {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .comment-item {
+            border-bottom: 1px solid #ddd;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .comment-actions {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .edit-comment-btn, .delete-comment-btn {
+            padding: 0.2rem 0.5rem;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            border: none;
+            border-radius: 3px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .edit-comment-btn {
+            background: #6c757d;
+        }
+
+        .delete-comment-btn {
+            background: #dc3545;
+        }
+
+        .edit-comment-btn:hover {
+            background: #5a6268;
+        }
+
+        .delete-comment-btn:hover {
+            background: #c82333;
+        }
+
+        textarea {
+            width: 100%;
+            height: 70px;
+            margin-bottom: 0.5rem;
+            resize: vertical;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 0.3rem;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            button:hover {
+                background: #0056b3;
+            }
+
+        .error-message {
+            color: #dc3545;
+            margin-top: 0.5rem;
+        }
+
+        .comment-time {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 2px;
+            display: block;
+        }
+
+        #rating-buttons {
+            margin-top: 10px;
+        }
+
+            #rating-buttons button {
+                margin-right: 10px;
+            }
+    </style>
+</head>
+<body>
+    <button id="logout-btn">Logout</button>
+    <h1 id="movie-title">Loading...</h1>
+    <div id="movie-description" class="movie-info"></div>
+
+    <div class="rating-section">
+        <h2>Average Rating: <span id="average-rating">-</span></h2>
+
+    <div class="comments">
+        <h2>Comments</h2>
+        <div id="comments-list">Loading comments...</div>
+    </div>
+
+    <!-- Comment Section -->
+    <div class="add-comment">
+        <h2>Add a Comment</h2>
+        <textarea id="comment-text" placeholder="Write your comment here..."></textarea>
+        <br />
+        <button id="post-comment-btn">Post Comment</button>
+        <div class="error-message" id="comment-error"></div>
+    </div>
+
+    <!-- Rating Section -->
+    <div class="add-rating">
+        <h2>Give a Rating</h2>
+        <label for="rating-input">Your rating (1-5): </label>
+        <input type="number" id="rating-input" min="1" max="5" />
+        <br />
+        <div id="rating-buttons">
+            <button id="post-rating-btn">Post Rating</button>
+            <button id="edit-rating-btn">Edit Rating</button>
+        </div>
+        <div class="error-message" id="rating-error"></div>
+    </div>
+
+    <script>
+        const currentUsername = localStorage.getItem('username');
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('id');
+        if (!movieId) {
+            alert('No movie ID specified.');
+            window.location.href = 'movies.html';
+        }
+
+        const movieTitleElem = document.getElementById('movie-title');
+        const movieDescriptionElem = document.getElementById('movie-description');
+        const averageRatingElem = document.getElementById('average-rating');
+        const commentsListElem = document.getElementById('comments-list');
+        const commentErrorElem = document.getElementById('comment-error');
+        const ratingErrorElem = document.getElementById('rating-error');
+
+        const ratingInput = document.getElementById('rating-input');
+        const postRatingBtn = document.getElementById('post-rating-btn');
+        const editRatingBtn = document.getElementById('edit-rating-btn');
+
+        let isEditingRating = false;
+        let userRatingId = null; // To store user's rating ID if exists
+
+        async function fetchMovieDetails() {
+            try {
+                const response = await fetch(`http://localhost:5000/api/movies/${movieId}`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to load movie details');
+                }
+                const movie = await response.json();
+                movieTitleElem.textContent = movie.title;
+                movieDescriptionElem.textContent = movie.description || 'No description available.';
+                averageRatingElem.textContent = movie.averageRating ? movie.averageRating.toFixed(2) : 'No ratings yet';
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        async function fetchUserRating() {
+            try {
+                // API should return current user's rating for the movie, if any
+                const response = await fetch(`http://localhost:5000/api/movies/${movieId}/myrating`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+
+                if (!response.ok) {
+                    userRatingId = null;
+                    return null;
+                }
+
+                const rating = await response.json();
+                userRatingId = rating.id || null;
+                return rating.score || null;
+            } catch (err) {
+                console.error('Failed to get user rating:', err);
+                userRatingId = null;
+                return null;
+            }
+        }
+
+        async function fetchComments() {
+            try {
+                const response = await fetch(`http://localhost:5000/api/movies/${movieId}/comments`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load comments');
+                }
+
+                const comments = await response.json();
+
+                commentsListElem.innerHTML = '';
+
+                if (comments.length === 0) {
+                    commentsListElem.textContent = 'No comments yet.';
+                    return;
+                }
+
+                comments.forEach(c => {
+                    const div = document.createElement('div');
+                    div.classList.add('comment-item');
+
+                    div.innerHTML = `
+                                <span class="comment-author">${c.username}</span>
+                                <span class="comment-text" data-id="${c.id}">${c.text}</span>
+                                ${c.username === currentUsername ? `
+                                    <span class="comment-actions">
+                                        <button class="edit-comment-btn" data-id="${c.id}">Edit</button>
+                                        <button class="delete-comment-btn" data-id="${c.id}">Delete</button>
+                                    </span>
+                                ` : ''}
+                                <span class="comment-time">${c.timeAgo || 'Just now'}</span>
+                            `;
+
+                    commentsListElem.appendChild(div);
+                });
+            } catch (err) {
+                commentsListElem.innerHTML = `<div style="color: red;">Error loading comments: ${err.message}</div>`;
+            }
+        }
+
+        commentsListElem.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('edit-comment-btn')) {
+                const commentId = e.target.dataset.id;
+                const commentTextElem = document.querySelector(`.comment-text[data-id="${commentId}"]`);
+                const originalText = commentTextElem.textContent;
+
+                // Turn into editable textarea
+                const textarea = document.createElement('textarea');
+                textarea.value = originalText;
+                textarea.style.width = '100%';
+                textarea.style.marginTop = '0.5rem';
+
+                const saveBtn = document.createElement('button');
+                saveBtn.textContent = 'Save';
+                saveBtn.style.marginRight = '0.5rem';
+
+                const cancelBtn = document.createElement('button');
+                cancelBtn.textContent = 'Cancel';
+
+                const parent = e.target.parentElement.parentElement;
+                commentTextElem.style.display = 'none';
+                e.target.parentElement.style.display = 'none'; // Hide action buttons
+                parent.appendChild(textarea);
+                parent.appendChild(saveBtn);
+                parent.appendChild(cancelBtn);
+
+                cancelBtn.onclick = () => {
+                    textarea.remove();
+                    saveBtn.remove();
+                    cancelBtn.remove();
+                    commentTextElem.style.display = '';
+                    e.target.parentElement.style.display = '';
+                };
+
+                saveBtn.onclick = async () => {
+                    const newText = textarea.value.trim();
+                    if (!newText) {
+                        alert('Comment cannot be empty');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`http://localhost:5000/api/comments/${commentId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + token
+                            },
+                            body: JSON.stringify({ text: newText })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to update comment');
+                        }
+
+                        commentTextElem.textContent = newText;
+                        textarea.remove();
+                        saveBtn.remove();
+                        cancelBtn.remove();
+                        commentTextElem.style.display = '';
+                        e.target.parentElement.style.display = '';
+                    } catch (err) {
+                        alert(err.message);
+                    }
+                };
+            }
+
+            if (e.target.classList.contains('delete-comment-btn')) {
+                if (!confirm('Are you sure you want to delete this comment?')) {
+                    return;
+                }
+
+                const commentId = e.target.dataset.id;
+                try {
+                    const response = await fetch(`http://localhost:5000/api/comments/${commentId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to delete comment');
+                    }
+
+                    fetchComments();
+                } catch (err) {
+                    alert(err.message);
+                }
+            }
+        });
+
+        document.getElementById('post-comment-btn').addEventListener('click', async () => {
+            const text = document.getElementById('comment-text').value.trim();
+            if (!text) {
+                commentErrorElem.textContent = 'Comment cannot be empty';
+                return;
+            }
+            commentErrorElem.textContent = '';
+            try {
+                const response = await fetch(`http://localhost:5000/api/movies/${movieId}/comments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ text })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.message || 'Failed to post comment');
+                }
+
+                document.getElementById('comment-text').value = '';
+                fetchComments();
+            } catch (err) {
+                commentErrorElem.textContent = err.message;
+            }
+        });
+
+        async function postNewRating(score) {
+            const response = await fetch(`http://localhost:5000/api/movies/${movieId}/ratings`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ score })
+            });
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.message || 'Failed to post rating');
+            }
+            const data = await response.json();
+            userRatingId = data.id;
+        }
+
+        async function updateExistingRating(score) {
+            const response = await fetch(`http://localhost:5000/api/movies/${movieId}/ratings`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ score })
+            });
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.message || 'Failed to update rating');
+            }
+        }
+
+        postRatingBtn.addEventListener('click', async () => {
+            const score = parseInt(ratingInput.value);
+            ratingErrorElem.textContent = '';
+            if (isNaN(score) || score < 1 || score > 5) {
+                ratingErrorElem.textContent = 'Rating must be between 1 and 5';
+                return;
+            }
+
+            postRatingBtn.disabled = true;
+            editRatingBtn.disabled = true;
+            ratingInput.disabled = true;
+
+            try {
+                if (userRatingId) {
+                    await updateExistingRating(score);
+                } else {
+                    await postNewRating(score);
+                }
+                await fetchMovieDetails(); // update average rating
+                ratingInput.value = '';
+                userRatingId = null; // reset after post
+            } catch (err) {
+                ratingErrorElem.textContent = err.message;
+            } finally {
+                postRatingBtn.disabled = false;
+                editRatingBtn.disabled = false;
+                ratingInput.disabled = false;
+                isEditingRating = false;
+            }
+        });
+
+        editRatingBtn.addEventListener('click', async () => {
+            ratingErrorElem.textContent = '';
+            if (isEditingRating) return;
+
+            try {
+                const currentScore = await fetchUserRating();
+                if (currentScore === null) {
+                    ratingErrorElem.textContent = 'You have no rating to edit yet.';
+                    return;
+                }
+                ratingInput.value = currentScore;
+                isEditingRating = true;
+                postRatingBtn.textContent = 'Save Rating';
+            } catch (err) {
+                ratingErrorElem.textContent = 'Error fetching your rating: ' + err.message;
+            }
+        });
+
+        // On load
+        (async function init() {
+            await fetchMovieDetails();
+            await fetchComments();
+            await fetchUserRating(); // populate userRatingId
+        })();
+
+    </script>
+</body>
+</html>

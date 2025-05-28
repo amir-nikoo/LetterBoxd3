@@ -117,7 +117,7 @@ namespace LetterBoxd3.Services
                 return ServiceResult<MovieDto>.Fail(403, "This comment belongs to another user.");
 
             if (ContainsBannedWord(commentPostDto.Text))
-                return ServiceResult<MovieDto>.Fail(403, "Comment contains inappropriate content.");
+                return ServiceResult<MovieDto>.Fail(403, "Edited comment contains inappropriate content.");
 
             targetComment.Text = commentPostDto.Text;
             await _context.SaveChangesAsync();

@@ -143,9 +143,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// **Add these two lines to serve your HTML + JS frontend files**
-app.UseDefaultFiles();   // Serves index.html automatically on root URL
-app.UseStaticFiles();    // Serves your static files like .html, .js, .css from wwwroot
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseCors("AllowFrontend");
 

@@ -84,7 +84,7 @@
         <button onclick="register()">Sign Up</button>
         <div class="message" id="message"></div>
         <div class="link">
-            Already have an account? <a href="login.html">Login</a>
+            Already have an account? <a href="Index.html">Login</a>
         </div>
     </div>
 
@@ -141,7 +141,7 @@
 
                 messageEl.textContent = "Registration successful! Redirecting to login...";
                 messageEl.style.color = "lightgreen";
-                setTimeout(() => window.location.href = "login.html", 2000);
+                setTimeout(() => window.location.href = "Index.html", 2000);
 
             } catch (err) {
                 messageEl.textContent = "Something went wrong. Please try again.";

@@ -16,6 +16,22 @@ namespace LetterBoxd3.Services
             _context = context;
             _movieService = movieService;
         }
+
+        public async Task<ServiceResult<int>> GetRating(int movieId, int userId)
+        {
+            var targetMovie = await _context.Movies
+                .Include(m => m.Ratings)
+                .FirstOrDefaultAsync(m => m.Id == movieId);
+
+            if (targetMovie == null)
+                return ServiceResult<int>.Fail(404, "Movie not found.");
+
+            var userRating = targetMovie.Ratings.FirstOrDefault(r => r.UserId == userId);
+            if (userRating == null)
+                return ServiceResult<int>.Fail(404, "User has not rated this movie.");
+
+            return ServiceResult<int>.Successful(userRating.Score);
+        }
         
         public async Task<ServiceResult<MovieDto>> PostRating(int movieId, int userId, RatingDto ratingDto)
         {

@@ -1,50 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>LetterBoxd - Home</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #121212;
-            color: #f1f1f1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+  <meta charset="UTF-8">
+  <title>Login - LetterBoxd Clone</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #1c1c1c;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-        h1 {
-            margin-bottom: 30px;
-            color: #ff4500;
-        }
+    .login-container {
+      background-color: #2c2c2c;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #000;
+      width: 300px;
+    }
 
-        nav a {
-            margin: 10px 0;
-            font-size: 1.2em;
-            color: #f1f1f1;
-            text-decoration: none;
-            padding: 10px 20px;
-            border: 2px solid #ff4500;
-            border-radius: 6px;
-            display: inline-block;
-            transition: background-color 0.3s ease;
-        }
+    input, button {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 6px;
+    }
 
-            nav a:hover {
-                background-color: #ff4500;
-                color: #121212;
-            }
-    </style>
+    input {
+      background-color: #444;
+      color: #fff;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+
+    a {
+      color: #ccc;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <h1>Welcome to LetterBoxd</h1>
-    <nav>
-        <a href="login.html">Login</a><br />
-        <a href="register.html">Register</a><br />
-        <a href="MoviesPreview.html">Movies Preview</a><br />
-        <a href="Movie.html">Movie Details</a><br />
-    </nav>
+    <div class="login-container">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <button onclick="login()">Login</button>
+        <a href="register.html">Don't have an account?</a>
+        <p id="error" style="color: red;"></p>
+    </div>
+    <script>
+        async function login() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const errorEl = document.getElementById("error");
+            errorEl.textContent = "";
+
+            if (!username || !password) {
+                errorEl.textContent = "Username and password are required.";
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:5000/api/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ UserName: username, Password: password })
+                });
+
+                if (!response.ok) {
+                    const contentType = response.headers.get("content-type") || "";
+
+                    if (contentType.includes("application/json") || contentType.includes("application/problem+json")) {
+                        const errorData = await response.json();
+                        if (errorData.errors) {
+                            const messages = Object.values(errorData.errors).flat().join(" ");
+                            errorEl.textContent = messages;
+                        } else {
+                            errorEl.textContent = errorData.message || "Login failed. Please try again.";
+                        }
+                    } else {
+                        const errorText = await response.text();
+                        errorEl.textContent = errorText || "Login failed. Please try again.";
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("username", data.username);
+                window.location.href = "moviesPreview.html";
+            } catch (err) {
+                errorEl.textContent = "Something went wrong. Try again.";
+                errorEl.style.whiteSpace = "normal";
+            }
+        }
+    </script>
+
 </body>
 </html>

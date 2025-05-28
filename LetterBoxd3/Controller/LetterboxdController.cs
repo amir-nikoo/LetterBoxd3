@@ -143,6 +143,18 @@ public class LetterboxdController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("movies/{movieId:int}/ratings")]
+    public async Task<IActionResult> GetRating(int movieId)
+    {
+        var userId = GetCurrentUserId();
+        var response = await _ratingService.GetRating(movieId, userId);
+        if (!response.Success)
+            return NotFound(response.ErrorMessage);
+
+        return Ok(response.Data);
+    }
+
+    [Authorize]
     [HttpPost("movies/{movieId:int}/ratings")]
     public async Task<IActionResult> PostRating(int movieId,[FromBody] RatingDto ratingDto)
     {

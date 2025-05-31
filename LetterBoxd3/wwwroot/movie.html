@@ -3,134 +3,172 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Movie Details</title>
+    <title>Movie Details - LetterBoxd Clone</title>
     <style>
+        /* Base & Layout */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e2f; /* dark slate */
+            color: #e0e0e0;
             max-width: 900px;
             margin: 2rem auto;
             padding: 0 1rem;
-            background: #f9f9f9;
         }
 
         h1, h2 {
-            color: #333;
-        }
-
-        #logout-btn {
-            margin: 1rem 0;
-            padding: 0.5rem 1rem;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            float: right;
-        }
-
-        .movie-info {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            color: #ffffff;
             margin-bottom: 1rem;
         }
 
+        /* Logout button */
+        #logout-btn {
+            float: right;
+            margin: 1rem 0;
+            padding: 0.6rem 1rem;
+            background-color: #dc3545; /* red */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+            #logout-btn:hover {
+                background-color: #b02a37;
+            }
+
+        /* Containers with card style */
+        .movie-info,
+        .comments,
+        .add-comment,
+        .add-rating,
+        .rating-section {
+            background-color: #2d2d44; /* dark card */
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Movie poster */
+        #movie-poster {
+            max-width: 300px;
+            display: block;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Comments container with scroll */
         #comments-container {
             max-height: 300px;
             overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: 1px solid #444766;
+            padding: 12px;
+            border-radius: 12px;
+            background-color: #3d3d5c;
         }
 
-        .comments, .add-comment, .rating-section {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-            margin-bottom: 1rem;
-        }
-
+        /* Individual comment */
         .comment-item {
-            border-bottom: 1px solid #ddd;
-            padding: 0.5rem 0;
-            position: relative;
+            border-bottom: 1px solid #444766;
+            padding: 0.6rem 0;
+            color: #ccc;
         }
 
         .comment-author {
             font-weight: bold;
+            color: #fff;
             margin-right: 0.5rem;
         }
 
-        .comment-actions {
-            display: inline-block;
-            margin-left: 10px;
-        }
-
-        .edit-comment-btn, .delete-comment-btn {
-            padding: 0.2rem 0.5rem;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-            border: none;
-            border-radius: 3px;
-            color: white;
-            cursor: pointer;
-        }
-
-        .edit-comment-btn {
-            background: #6c757d;
-        }
-
-        .delete-comment-btn {
-            background: #dc3545;
-        }
-
-        .edit-comment-btn:hover {
-            background: #5a6268;
-        }
-
-        .delete-comment-btn:hover {
-            background: #c82333;
-        }
-
-        textarea {
-            width: 100%;
-            height: 70px;
-            margin-bottom: 0.5rem;
-            resize: vertical;
-        }
-
-        input[type="number"] {
-            width: 60px;
-            padding: 0.3rem;
-        }
-
-        button {
-            background: #007bff;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-            button:hover {
-                background: #0056b3;
-            }
-
-        .error-message {
-            color: #dc3545;
-            margin-top: 0.5rem;
-        }
-
         .comment-time {
-            font-size: 0.9rem;
-            color: #666;
+            font-size: 0.85rem;
+            color: #999bbb;
             margin-top: 2px;
             display: block;
         }
 
+        /* Comment buttons */
+        .comment-actions button {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-comment-btn {
+            background-color: #6c757d;
+        }
+
+            .edit-comment-btn:hover {
+                background-color: #5a6268;
+            }
+
+        .delete-comment-btn {
+            background-color: #dc3545;
+        }
+
+            .delete-comment-btn:hover {
+                background-color: #b02a37;
+            }
+
+        /* Textarea and inputs */
+        textarea, input[type="number"] {
+            width: 100%;
+            border-radius: 8px;
+            border: none;
+            background-color: #3d3d5c;
+            color: #fff;
+            font-size: 1rem;
+            padding: 0.6rem;
+            margin-bottom: 1rem;
+            resize: vertical;
+        }
+
+        input[type="number"] {
+            max-width: 80px;
+        }
+
+            textarea:focus, input[type="number"]:focus {
+                outline: 2px solid #4f8df9;
+                background-color: #444;
+            }
+
+        /* Buttons */
+        button {
+            background-color: #4f8df9;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+            button:hover {
+                background-color: #1f6fe2;
+            }
+
+        /* Error messages */
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            min-height: 1.2em;
+        }
+
+        /* Rating buttons container */
         #rating-buttons {
             margin-top: 10px;
         }
@@ -141,7 +179,7 @@
     </style>
 </head>
 <body>
-    <img id="movie-poster" src="" alt="Movie Poster" style="max-width: 300px; display: block; margin-bottom: 20px;" />
+    <img id="movie-poster" src="" alt="Movie Poster" />
     <button id="logout-btn">Logout</button>
     <h1 id="movie-title">Loading...</h1>
     <div id="movie-description" class="movie-info"></div>
@@ -152,7 +190,7 @@
 
     <div class="comments">
         <h2>Comments</h2>
-        <div id="comments-container" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+        <div id="comments-container">
             <div id="comments-list">Loading comments...</div>
         </div>
     </div>
@@ -161,10 +199,9 @@
     <div class="add-comment">
         <h2>Add a Comment</h2>
         <textarea id="comment-text" placeholder="Write your comment here..."></textarea>
-        <br />
         <button id="post-comment-btn">Post Comment</button>
         <div class="error-message" id="comment-error"></div>
-        <div id="edit-comment-error" style="color: red; margin-top: 5px;"></div>
+        <div class="error-message" id="edit-comment-error"></div>
     </div>
 
     <!-- Rating Section -->
@@ -172,22 +209,20 @@
         <h2>Give a Rating</h2>
         <label for="rating-input">Your rating (1-5): </label>
         <input type="number" id="rating-input" min="1" max="5" />
-        <br />
         <div id="rating-buttons">
             <button id="post-rating-btn">Post Rating</button>
             <button id="edit-rating-btn">Change Rating</button>
         </div>
         <div class="error-message" id="rating-error"></div>
     </div>
-
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const movieId = new URLSearchParams(window.location.search).get('id');
             const token = localStorage.getItem('token');
             const username = localStorage.getItem('username');
+
+            // Elements we'll use later
             const postCommentBtn = document.getElementById('post-comment-btn');
-            postCommentBtn.addEventListener('click', postComment);
             const titleEl = document.getElementById('movie-title');
             const descEl = document.getElementById('movie-description');
             const avgRatingEl = document.getElementById('average-rating');
@@ -196,6 +231,39 @@
             const commentErrorEl = document.getElementById('comment-error');
             const ratingInputEl = document.getElementById('rating-input');
             const ratingErrorEl = document.getElementById('rating-error');
+            const postRatingBtn = document.getElementById('post-rating-btn');
+            const editRatingBtn = document.getElementById('edit-rating-btn');
+
+            // Check if user is logged in
+            if (!token) {
+                // Hide movie poster and movie info
+                const posterEl = document.getElementById('movie-poster');
+                if (posterEl) posterEl.style.display = 'none';
+
+                // Hide movie title and description
+                titleEl.textContent = '';
+                descEl.textContent = '';
+
+                // Hide all sections you asked for:
+                const avgRatingSection = document.querySelector('.rating-section');
+                const commentsSection = document.querySelector('.comments');
+                const addCommentSection = document.querySelector('.add-comment');
+                const addRatingSection = document.querySelector('.add-rating');
+
+                if (avgRatingSection) avgRatingSection.style.display = 'none';
+                if (commentsSection) commentsSection.style.display = 'none';
+                if (addCommentSection) addCommentSection.style.display = 'none';
+                if (addRatingSection) addRatingSection.style.display = 'none';
+
+                // Show a login message inside the movie title area (or somewhere else if you prefer)
+                titleEl.innerHTML = 'You need to <a href="/login" style="color:#4f8df9;">log in</a> to view this page.';
+
+                // Stop running the rest of the code to prevent further data fetching
+                return;
+            }
+
+            // If logged in, set up event listeners
+            postCommentBtn.addEventListener('click', postComment);
 
             async function fetchMovie() {
                 try {
@@ -215,7 +283,7 @@
                         posterEl.alt = `Poster of ${movie.title}`;
                         posterEl.style.display = 'block';
                     } else {
-                        posterEl.style.display = 'none'; // hide if no poster
+                        posterEl.style.display = 'none';
                     }
                 } catch (err) {
                     titleEl.textContent = 'Error loading movie';
@@ -236,27 +304,26 @@
                         const div = document.createElement('div');
                         div.className = 'comment-item';
                         div.innerHTML = `
-                    <span class="comment-author">${comment.username}: </span>
-                    <span>${comment.text}</span>
-                    <span class="comment-time">${comment.timeAgo}</span>
-                    ${comment.username === username ? `
-                        <div class="comment-actions">
-                            <button class="edit-comment-btn" data-id="${comment.id}">Edit</button>
-                            <button class="delete-comment-btn" data-id="${comment.id}">Delete</button>
-                        </div>
-                    ` : ''}
-                `;
+                        <span class="comment-author">${comment.username}:</span>
+                        <span>${comment.text}</span>
+                        <span class="comment-time">${comment.timeAgo}</span>
+                        ${comment.username === username ? `
+                            <div class="comment-actions">
+                                <button class="edit-comment-btn" data-id="${comment.id}">Edit</button>
+                                <button class="delete-comment-btn" data-id="${comment.id}">Delete</button>
+                            </div>
+                        ` : ''}
+                    `;
                         commentListEl.appendChild(div);
                     });
 
-                    // ✅ Add button click listeners here:
                     document.querySelectorAll('.edit-comment-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
                             const commentId = e.target.dataset.id;
                             const newText = prompt('Edit your comment:');
                             if (newText) {
                                 const editErrorEl = document.getElementById('edit-comment-error');
-                                editErrorEl.textContent = '';  // clear previous error
+                                editErrorEl.textContent = '';
 
                                 try {
                                     const res = await fetch(`/api/movies/${movieId}/comments/${commentId}`, {
@@ -283,10 +350,9 @@
                                         } catch {
                                             alert(errorText || 'Failed to edit comment');
                                         }
-                                        return;  // don't refresh comments if error
+                                        return;
                                     }
 
-                                    // Success — reload comments
                                     fetchComments();
 
                                 } catch (err) {
@@ -316,8 +382,6 @@
                 }
             }
 
-            const postRatingBtn = document.getElementById('post-rating-btn');
-            const editRatingBtn = document.getElementById('edit-rating-btn');
             let userHasRated = false;
 
             async function fetchRating() {
@@ -326,7 +390,6 @@
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (!res.ok) {
-                        // User has not rated yet or error
                         userHasRated = false;
                         postRatingBtn.style.display = 'inline-block';
                         editRatingBtn.style.display = 'none';
@@ -334,11 +397,10 @@
                         return;
                     }
 
-                    const userRating = await res.json(); // number like 4
+                    const userRating = await res.json();
                     ratingInputEl.value = userRating;
                     userHasRated = true;
 
-                    // Show only the edit button, hide post button
                     postRatingBtn.style.display = 'none';
                     editRatingBtn.style.display = 'inline-block';
 
@@ -351,7 +413,6 @@
                 }
             }
 
-            // Add event listeners for both buttons
             postRatingBtn.addEventListener('click', async () => {
                 await submitRating('POST');
             });
@@ -409,10 +470,8 @@
                     });
 
                     if (!res.ok) {
-                        // Try to parse the error message from the server's response
                         const errorText = await res.text().catch(() => 'Failed to post comment');
                         try {
-                            // Try to parse errorText as JSON (in case backend changes later)
                             const errorData = JSON.parse(errorText);
                             if (errorData.message) {
                                 commentErrorEl.textContent = errorData.message;
@@ -423,13 +482,11 @@
                                 commentErrorEl.textContent = 'Failed to post comment';
                             }
                         } catch {
-                            // If not JSON, just show the plain error string (from backend)
                             commentErrorEl.textContent = errorText || 'Failed to post comment';
                         }
                         return;
                     }
 
-                    // If success:
                     commentTextEl.value = '';
                     fetchComments();
                 } catch (err) {
@@ -439,9 +496,12 @@
             }
 
             document.getElementById('logout-btn').addEventListener('click', () => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('username');
-                window.location.href = '/Index.html';
+                const confirmed = confirm('Are you sure you want to logout?');
+                if (confirmed) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    window.location.href = '/login';
+                }
             });
 
             fetchMovie();

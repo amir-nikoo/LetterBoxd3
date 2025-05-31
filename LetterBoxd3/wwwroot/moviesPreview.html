@@ -6,17 +6,35 @@
     <title>Movies</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 900px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 960px;
             margin: 2rem auto;
             padding: 0 1rem;
-            background: #f9f9f9;
+            background: #1e1e2f; /* dark slate / indigo gray */
+            color: #e0e0e0;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #ffffff;
+            margin-bottom: 2rem;
         }
+
+        #logout-btn {
+            float: right;
+            padding: 0.5rem 1rem;
+            background: #e63946;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+            #logout-btn:hover {
+                background: #c82333;
+            }
 
         .movie-list {
             list-style: none;
@@ -24,54 +42,57 @@
         }
 
         .movie-item {
-            background: white;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            background: #2d2d44;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
+            .movie-item:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            }
+
         .movie-info {
-            max-width: 80%;
+            max-width: 75%;
         }
 
         .movie-title {
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 1.4rem;
+            font-weight: 600;
             margin: 0;
-            color: #222;
+            color: #ffffff;
         }
 
         .movie-description {
-            margin: 0.3rem 0 0;
-            color: #666;
+            margin-top: 0.4rem;
+            font-size: 0.95rem;
+            color: #bbbbbb;
         }
 
         .details-link {
-            background: #007bff;
+            background: #4f8df9;
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
             text-decoration: none;
-            transition: background-color 0.3s;
+            font-weight: 500;
+            transition: background 0.3s ease;
         }
 
             .details-link:hover {
-                background: #0056b3;
+                background: #1f6fe2;
             }
 
-        #logout-btn {
-            margin: 1rem 0;
-            padding: 0.5rem 1rem;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            float: right;
+        #error-msg {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 2rem;
         }
     </style>
 </head>
@@ -79,7 +100,7 @@
     <button id="logout-btn">Logout</button>
     <h1>Movies</h1>
     <ul id="movies" class="movie-list"></ul>
-    <p id="error-msg" style="color: red;"></p>
+    <p id="error-msg"></p>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const moviesList = document.getElementById('movies');
@@ -95,7 +116,18 @@
                             'Authorization': `Bearer ${token}`
                         }
                     });
-                    if (!response.ok) throw new Error('Failed to fetch movies');
+
+                    if (response.status === 401) {
+                        // User not authorized
+                        moviesList.innerHTML = ''; // Clear movies list
+                        errorMsg.innerHTML = 'You need to <a href="/login" style="color:#4f8df9;">log in</a> to see the movies.';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch movies');
+                    }
+
                     const movies = await response.json();
 
                     moviesList.innerHTML = '';
@@ -103,11 +135,11 @@
                         const li = document.createElement('li');
                         li.className = 'movie-item';
                         li.innerHTML = `
-              <div class="movie-info">
-                <p class="movie-title">${movie.title}</p>
-              </div>
-              <a href="/Movie.html?id=${movie.id}" class="details-link">Details</a>
-            `;
+                          <div class="movie-info">
+                            <p class="movie-title">${movie.title}</p>
+                          </div>
+                          <a href="/movie?id=${movie.id}" class="details-link">Details</a>
+                        `;
                         moviesList.appendChild(li);
                     });
                 } catch (error) {
@@ -116,15 +148,16 @@
             }
 
             logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('username');
-                window.location.href = '/Index.html';
+                const confirmed = confirm('Are you sure you want to logout?');
+                if (confirmed) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    window.location.href = '/login';
+                }
             });
 
             loadMovies();
         });
     </script>
-
 </body>
 </html>
-    

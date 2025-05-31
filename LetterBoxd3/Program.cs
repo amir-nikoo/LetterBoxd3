@@ -1,4 +1,5 @@
-﻿using LetterBoxd3.Configurations;
+﻿using Microsoft.AspNetCore.Rewrite;
+using LetterBoxd3.Configurations;
 using LetterBoxdContext;
 using LetterBoxdDomain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -143,8 +144,18 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+var rewriteOptions = new RewriteOptions()
+    .AddRedirect(@"^$", "login")
+    .AddRedirect(@"^index\.html$", "login")
+    .AddRewrite(@"^login$", "Index.html", skipRemainingRules: true)
+    .AddRewrite(@"^register$", "Register.html", skipRemainingRules: true)
+    .AddRewrite(@"^movie$", "Movie.html", skipRemainingRules: true)
+    .AddRewrite(@"^movies$", "MoviesPreview.html", skipRemainingRules: true);
+
+app.UseRewriter(rewriteOptions);
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
 
 app.UseCors("AllowFrontend");
 

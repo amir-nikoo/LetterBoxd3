@@ -1,11 +1,8 @@
-﻿    using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using LetterBoxd3.Dtos;
 using LetterBoxd3.Interfaces;
-
-//dependency injection
-//getting a front end
 
 [Route("api")]
 [ApiController]

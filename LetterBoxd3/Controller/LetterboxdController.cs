@@ -4,6 +4,8 @@ using System.Security.Claims;
 using LetterBoxd3.Dtos;
 using LetterBoxd3.Interfaces;
 
+//starting to put them on the internet. just moved the frontend to solution
+
 [Route("api")]
 [ApiController]
 public class LetterboxdController : ControllerBase

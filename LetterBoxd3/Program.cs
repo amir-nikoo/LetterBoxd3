@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Rewrite;
+﻿using Npgsql.EntityFrameworkCore.PostgreSQL;
+using Microsoft.AspNetCore.Rewrite;
 using LetterBoxd3.Configurations;
 using LetterBoxdContext;
 using LetterBoxdDomain;
@@ -51,7 +52,7 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
 
 builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseNpgsql(connectionString)
 );
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));

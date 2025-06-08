@@ -8,6 +8,7 @@ COPY LetterBoxd3Solution.sln ./
 COPY LetterBoxd3 ./LetterBoxd3
 COPY LetterBoxdContext ./LetterBoxdContext
 COPY LetterBoxdDomain ./LetterBoxdDomain
+COPY LetterBoxd3/Configurations ./LetterBoxd3/Configurations
 
 # Restore all projects referenced by the solution
 RUN dotnet restore LetterBoxd3Solution.sln

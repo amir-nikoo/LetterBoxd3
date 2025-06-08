@@ -8,7 +8,6 @@ namespace LetterBoxd3.Configurations
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            // Ensure all authorized endpoints show the lock icon
             var authAttributes = context.MethodInfo
                 .GetCustomAttributes(true)
                 .OfType<AuthorizeAttribute>()

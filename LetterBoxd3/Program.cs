@@ -32,12 +32,11 @@ builder.Configuration.AddConfiguration(configuration);
 
 builder.Services.AddControllers();
 
-// CORS policy to allow your frontend (change port if needed)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // Your HTML+JS app origin, change if different
+        policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -159,6 +158,24 @@ app.UseStaticFiles();
 
 
 app.UseCors("AllowFrontend");
+
+string configDir = Path.Combine(Directory.GetCurrentDirectory(), "Configurations");
+string bannedWordsPath = Path.Combine(configDir, "banned_words.txt");
+
+if (!File.Exists(bannedWordsPath))
+{
+    var bannedWordsContent = Environment.GetEnvironmentVariable("BANNED_WORDS_CONTENT");
+    if (!string.IsNullOrEmpty(bannedWordsContent))
+    {
+        Directory.CreateDirectory(configDir);
+        File.WriteAllText(bannedWordsPath, bannedWordsContent);
+    }
+    else
+    {
+        Console.WriteLine("Warning: 'BANNED_WORDS_CONTENT' environment variable is not set. Banned words file will not be created.");
+    }
+}
+
 
 app.UseAuthentication();
 app.UseAuthorization();

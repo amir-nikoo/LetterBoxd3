@@ -1,4 +1,3 @@
-# Ignore Visual Studio temporary files, directories, and files
 .vs/
 .vscode/
 .idea/

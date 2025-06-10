@@ -22,73 +22,65 @@
         }
 
         #logout-btn {
-            float: right;
-            padding: 0.5rem 1rem;
-            background: #e63946;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 0.6rem 1rem;
+            background-color: #dc3545;
             color: white;
             border: none;
             border-radius: 8px;
-            font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            z-index: 999;
         }
 
             #logout-btn:hover {
-                background: #c82333;
+                background-color: #b02a37;
             }
 
         .movie-list {
-            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
             padding: 0;
+            list-style: none;
         }
 
-        .movie-item {
+        .movie-card {
             background: #2d2d44;
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            padding: 1rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-            .movie-item:hover {
-                transform: translateY(-3px);
+            .movie-card:hover {
+                transform: translateY(-5px);
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             }
 
-        .movie-info {
-            max-width: 75%;
+        .movie-poster {
+            width: 100%;
+            max-width: 140px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
         }
 
         .movie-title {
-            font-size: 1.4rem;
+            font-size: 1rem;
             font-weight: 600;
-            margin: 0;
             color: #ffffff;
         }
-
-        .movie-description {
-            margin-top: 0.4rem;
-            font-size: 0.95rem;
-            color: #bbbbbb;
-        }
-
-        .details-link {
-            background: #4f8df9;
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.3s ease;
-        }
-
-            .details-link:hover {
-                background: #1f6fe2;
-            }
 
         #error-msg {
             color: #ff6b6b;
@@ -130,18 +122,17 @@
 
                     const movies = await response.json();
                     logoutBtn.style.display = 'inline-block';
-
-
                     moviesList.innerHTML = '';
+
                     movies.forEach(movie => {
                         const li = document.createElement('li');
-                        li.className = 'movie-item';
+                        const image = movie.imageUrl ? movie.imageUrl : 'https://via.placeholder.com/140x210?text=No+Image';
                         li.innerHTML = `
-                                  <div class="movie-info">
+                                <a href="/movie?id=${movie.id}" class="movie-card">
+                                    <img src="${image}" alt="Poster of ${movie.title}" class="movie-poster" />
                                     <p class="movie-title">${movie.title}</p>
-                                  </div>
-                                  <a href="/movie?id=${movie.id}" class="details-link">Details</a>
-                                `;
+                                </a>
+                            `;
                         moviesList.appendChild(li);
                     });
                 } catch (error) {

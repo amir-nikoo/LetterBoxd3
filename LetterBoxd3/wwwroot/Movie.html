@@ -302,7 +302,8 @@
                     document.querySelectorAll('.edit-comment-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
                             const commentId = e.target.dataset.id;
-                            const newText = prompt('Edit your comment:');
+                            const commentText = e.target.closest('.comment-item').querySelector('span:nth-child(2)').textContent;
+                            const newText = prompt('Edit your comment:', commentText);
                             if (newText) {
                                 const editErrorEl = document.getElementById('edit-comment-error');
                                 editErrorEl.textContent = '';

@@ -20,23 +20,22 @@ namespace LetterBoxd3.Services
         {
             _context = context;
             _movieService = movieService;
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "Configurations", "banned_words.txt");
-
-            if (File.Exists(path))
+            var bannedWordsEnv = Environment.GetEnvironmentVariable("BANNED_WORDS_CONTENT");
+            if (!string.IsNullOrWhiteSpace(bannedWordsEnv))
             {
-                _bannedWords = File.ReadAllLines(path)
-                    .Where(line => !string.IsNullOrWhiteSpace(line))
-                    .Select(line => line.Trim().ToLower())
+                _bannedWords = bannedWordsEnv
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(word => word.Trim().ToLower())
                     .ToList();
             }
             else
             {
-                var bannedWordsEnv = Environment.GetEnvironmentVariable("BANNED_WORDS_CONTENT");
-                if (!string.IsNullOrWhiteSpace(bannedWordsEnv))
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "Configurations", "banned_words.txt");
+                if (File.Exists(path))
                 {
-                    _bannedWords = bannedWordsEnv
-                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                        .Select(word => word.Trim().ToLower())
+                    _bannedWords = File.ReadAllLines(path)
+                        .Where(line => !string.IsNullOrWhiteSpace(line))
+                        .Select(line => line.Trim().ToLower())
                         .ToList();
                 }
                 else

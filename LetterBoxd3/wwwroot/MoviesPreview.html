@@ -97,7 +97,7 @@
     </style>
 </head>
 <body>
-    <button id="logout-btn">Logout</button>
+    <button id="logout-btn" style="display: none;">Logout</button>
     <h1>Movies</h1>
     <ul id="movies" class="movie-list"></ul>
     <p id="error-msg"></p>
@@ -118,7 +118,6 @@
                     });
 
                     if (response.status === 401) {
-                        logoutBtn.style.display = 'none';
                         moviesList.innerHTML = '';
                         errorMsg.innerHTML = 'You need to <a href="/login" style="color:#4f8df9;">log in</a> to see the movies.';
                         return;
@@ -129,17 +128,19 @@
                     }
 
                     const movies = await response.json();
+                    logoutBtn.style.display = 'inline-block';
+
 
                     moviesList.innerHTML = '';
                     movies.forEach(movie => {
                         const li = document.createElement('li');
                         li.className = 'movie-item';
                         li.innerHTML = `
-                          <div class="movie-info">
-                            <p class="movie-title">${movie.title}</p>
-                          </div>
-                          <a href="/movie?id=${movie.id}" class="details-link">Details</a>
-                        `;
+                                  <div class="movie-info">
+                                    <p class="movie-title">${movie.title}</p>
+                                  </div>
+                                  <a href="/movie?id=${movie.id}" class="details-link">Details</a>
+                                `;
                         moviesList.appendChild(li);
                     });
                 } catch (error) {

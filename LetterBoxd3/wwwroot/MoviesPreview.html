@@ -118,6 +118,7 @@
                     });
 
                     if (response.status === 401) {
+                        logoutBtn.style.display = 'none';
                         moviesList.innerHTML = '';
                         errorMsg.innerHTML = 'You need to <a href="/login" style="color:#4f8df9;">log in</a> to see the movies.';
                         return;

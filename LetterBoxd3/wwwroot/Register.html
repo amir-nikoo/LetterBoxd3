@@ -89,7 +89,7 @@
         <input type="password" id="password" placeholder="Password" />
         <input type="password" id="confirm-password" placeholder="Confirm Password" />
         <button onclick="register()">Sign Up</button>
-        <a href="/login">Already have an account?</a>
+        <a href="/login" onclick="event.preventDefault(); window.location.replace('/login');">Already have an account?</a>
         <p id="message"></p>
     </div>
     <script>

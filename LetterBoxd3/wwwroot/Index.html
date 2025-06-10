@@ -88,15 +88,18 @@
         <input type="text" id="username" placeholder="Username" />
         <input type="password" id="password" placeholder="Password" />
         <button onclick="login()">Login</button>
-        <a href="/register">Don't have an account?</a>
+        <a href="/register" onclick="event.preventDefault(); window.location.replace('/register');">Don't have an account?</a>
         <p id="error"></p>
     </div>
+    <p id="error"></p>
+
     <script>
         async function login() {
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value.trim();
             const errorEl = document.getElementById("error");
             errorEl.textContent = "";
+            errorEl.style.color = "#ff6b6b";
 
             if (!username || !password) {
                 errorEl.textContent = "Username and password are required.";
@@ -133,13 +136,19 @@
                 const data = await response.json();
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("username", data.username);
-                window.location.href = "/movies";
+
+                errorEl.textContent = "Login successful! Redirecting to movies...";
+                errorEl.style.color = "lightgreen";
+
+                setTimeout(() => {
+                    window.location.href = "/movies";
+                }, 2000);
+
             } catch (err) {
                 errorEl.textContent = "Something went wrong. Try again.";
                 errorEl.style.whiteSpace = "normal";
             }
         }
     </script>
-
 </body>
 </html>

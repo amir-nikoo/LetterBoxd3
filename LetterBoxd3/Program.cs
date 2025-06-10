@@ -180,6 +180,19 @@ if (!File.Exists(bannedWordsPath))
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.Use(async (context, next) =>
+{
+    await next(); // let other middleware and handlers run first
+
+    if (context.User.Identity?.IsAuthenticated == true)
+    {
+        context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, proxy-revalidate";
+        context.Response.Headers["Pragma"] = "no-cache";
+        context.Response.Headers["Expires"] = "0";
+        context.Response.Headers["Surrogate-Control"] = "no-store";
+    }
+});
+
 app.MapControllers();
 
 app.Run();

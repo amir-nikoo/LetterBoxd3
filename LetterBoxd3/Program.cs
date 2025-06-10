@@ -154,8 +154,16 @@ var rewriteOptions = new RewriteOptions()
 
 app.UseRewriter(rewriteOptions);
 app.UseDefaultFiles();
-app.UseStaticFiles();
-
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, proxy-revalidate";
+        ctx.Context.Response.Headers["Pragma"] = "no-cache";
+        ctx.Context.Response.Headers["Expires"] = "0";
+        ctx.Context.Response.Headers["Surrogate-Control"] = "no-store";
+    }
+});
 
 app.UseCors("AllowFrontend");
 
@@ -182,12 +190,13 @@ app.UseAuthorization();
 
 app.Use(async (context, next) =>
 {
-    await next();
 
     context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, proxy-revalidate";
     context.Response.Headers["Pragma"] = "no-cache";
     context.Response.Headers["Expires"] = "0";
     context.Response.Headers["Surrogate-Control"] = "no-store";
+
+    await next();
 });
 
 app.MapControllers();

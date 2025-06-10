@@ -20,13 +20,13 @@ namespace LetterBoxdContext
                 new Movie { Id = 1,
                     Title = "12 Angry Men",
                     ReleaseYear = 1957,
-                    Description = "The jury in a New York City murder trial is frustrated by a single member whose skeptical caution forces them to more carefully consider the evidence before jumping to a hasty verdict.",
+                    Description = "A lone juror in a New York City murder trial refuses to convict without discussing the evidence, challenging the others to reexamine their assumptions and biases.",
                     ImageUrl = "https://media-cache.cinematerial.com/p/500x/c5whwpvz/12-angry-men-theatrical-movie-poster.jpg?v=1456708298"
                 },
                 new Movie { Id = 2,
                     Title = "Soul",
                     ReleaseYear = 2020,
-                    Description = "Joe is a middle-school band teacher whose life hasn't quite gone the way he expected. His true passion is jazz. But when he travels to another realm to help someone find their passion, he soon discovers what it means to have soul.",
+                    Description = "A middle-school band teacher passionate about jazz journeys to a mysterious realm where he discovers the true meaning of life and soul.",
                     ImageUrl = "https://m.media-amazon.com/images/M/MV5BZTZkYjA5MDEtMjY1ZC00ODk5LThjOTUtZDYxODEzYWNjMTU2XkEyXkFqcGc@._V1_.jpg"
                 },
                 new Movie {

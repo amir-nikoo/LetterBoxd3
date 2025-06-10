@@ -87,6 +87,7 @@
         <h2>Register</h2>
         <input type="text" id="username" placeholder="Username" />
         <input type="password" id="password" placeholder="Password" />
+        <input type="password" id="confirm-password" placeholder="Confirm Password" />
         <button onclick="register()">Sign Up</button>
         <a href="Index.html">Already have an account?</a>
         <p id="message"></p>
@@ -95,12 +96,13 @@
         async function register() {
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value.trim();
+            const confirmPassword = document.getElementById("confirm-password").value.trim();
             const messageEl = document.getElementById("message");
             messageEl.textContent = "";
             messageEl.style.color = "red";
 
-            if (!username || !password) {
-                messageEl.textContent = "Username and password are required.";
+            if (!username || !password || !confirmPassword) {
+                messageEl.textContent = "All fields are required.";
                 return;
             }
 
@@ -116,6 +118,11 @@
 
             if (password.length > 20) {
                 messageEl.textContent = "Password must not be more than 20 characters.";
+                return;
+            }
+
+            if (password !== confirmPassword) { // <-- check match
+                messageEl.textContent = "Passwords do not match.";
                 return;
             }
 

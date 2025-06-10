@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LetterBoxdContext.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250603112156_tryingSupaBase")]
-    partial class tryingSupaBase
+    [Migration("20250609132354_firstMigration")]
+    partial class firstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,8 +67,8 @@ namespace LetterBoxdContext.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -91,7 +91,7 @@ namespace LetterBoxdContext.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "The jury in a New York City murder trial is frustrated by a single member whose skeptical caution forces them to more carefully consider the evidence before jumping to a hasty verdict.",
+                            Description = "s.",
                             ImageUrl = "https://media-cache.cinematerial.com/p/500x/c5whwpvz/12-angry-men-theatrical-movie-poster.jpg?v=1456708298",
                             ReleaseYear = 1957,
                             Title = "12 Angry Men"
@@ -99,7 +99,7 @@ namespace LetterBoxdContext.Migrations
                         new
                         {
                             Id = 2,
-                            Description = "Joe is a middle-school band teacher whose life hasn't quite gone the way he expected. His true passion is jazz. But when he travels to another realm to help someone find their passion, he soon discovers what it means to have soul.",
+                            Description = "l.",
                             ImageUrl = "https://m.media-amazon.com/images/M/MV5BZTZkYjA5MDEtMjY1ZC00ODk5LThjOTUtZDYxODEzYWNjMTU2XkEyXkFqcGc@._V1_.jpg",
                             ReleaseYear = 2020,
                             Title = "Soul"
@@ -107,7 +107,7 @@ namespace LetterBoxdContext.Migrations
                         new
                         {
                             Id = 3,
-                            Description = "A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.",
+                            Description = "e.",
                             ImageUrl = "https://m.media-amazon.com/images/M/MV5BMTc3MDcwMTc1MV5BMl5BanBnXkFtZTcwMzk4NTU3Mg@@._V1_.jpg",
                             ReleaseYear = 2009,
                             Title = "Avatar"

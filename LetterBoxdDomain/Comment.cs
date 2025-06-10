@@ -8,6 +8,7 @@ namespace LetterBoxdDomain
         public int Id { get; set; }
         public int MovieId{ get; set; }
 
+        [Column(TypeName = "character varying(200)")]
         [MaxLength(200)]
         public required string Text { get; set; }
         public int? UserId { get; set; }

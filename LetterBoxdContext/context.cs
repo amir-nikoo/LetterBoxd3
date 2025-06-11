@@ -35,6 +35,142 @@ namespace LetterBoxdContext
                     ReleaseYear = 2009,
                     Description = "A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.",
                     ImageUrl = "https://m.media-amazon.com/images/M/MV5BMTc3MDcwMTc1MV5BMl5BanBnXkFtZTcwMzk4NTU3Mg@@._V1_.jpg"
+                },
+                new Movie
+                {
+                    Id = 4,
+                    Title = "The Godfather",
+                    ReleaseYear = 1972,
+                    Description = "The aging patriarch of an organized crime dynasty transfers control to his reluctant son.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/3bhkrj58Vtu7enYsRolD1fZdja1.jpg"
+                },
+                new Movie
+                {
+                    Id = 5,
+                    Title = "Inception",
+                    ReleaseYear = 2010,
+                    Description = "A thief who steals corporate secrets through dream-sharing is given the inverse task of planting an idea.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg"
+                },
+                new Movie
+                {
+                    Id = 6,
+                    Title = "The Dark Knight",
+                    ReleaseYear = 2008,
+                    Description = "Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
+                },
+                new Movie
+                {
+                    Id = 7,
+                    Title = "Pulp Fiction",
+                    ReleaseYear = 1994,
+                    Description = "The lives of two mob hitmen, a boxer, and others intertwine in tales of violence and redemption.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg"
+                },
+                new Movie
+                {
+                    Id = 8,
+                    Title = "The Matrix",
+                    ReleaseYear = 1999,
+                    Description = "A computer hacker learns the true nature of reality and his role in the war against its controllers.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg"
+                },
+                new Movie
+                {
+                    Id = 9,
+                    Title = "Interstellar",
+                    ReleaseYear = 2014,
+                    Description = "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg"
+                },
+                new Movie
+                {
+                    Id = 10,
+                    Title = "Fight Club",
+                    ReleaseYear = 1999,
+                    Description = "An insomniac office worker and a soapmaker form an underground fight club that evolves into something more.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/bptfVGEQuv6vDTIMVCHjJ9Dz8PX.jpg"
+                },
+                new Movie
+                {
+                    Id = 11,
+                    Title = "Forrest Gump",
+                    ReleaseYear = 1994,
+                    Description = "Forrest Gump, a man with a low IQ, recounts the early years of his life when he found himself in the middle of key historical events.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg"
+                },
+                new Movie
+                {
+                    Id = 12,
+                    Title = "The Shawshank Redemption",
+                    ReleaseYear = 1994,
+                    Description = "Two imprisoned men bond over years, finding solace and redemption through acts of decency.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg"
+                },
+                new Movie
+                {
+                    Id = 13,
+                    Title = "Gladiator",
+                    ReleaseYear = 2000,
+                    Description = "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg"
+                },
+                new Movie
+                {
+                    Id = 14,
+                    Title = "The Lion King",
+                    ReleaseYear = 1994,
+                    Description = "Lion prince Simba and his father are targeted by his bitter uncle, who wants to ascend the throne himself.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg"
+                },
+                new Movie
+                {
+                    Id = 15,
+                    Title = "Coco",
+                    ReleaseYear = 2017,
+                    Description = "Aspiring musician Miguel enters the Land of the Dead to find his great-great-grandfather, a legendary singer.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg"
+                },
+                new Movie
+                {
+                    Id = 16,
+                    Title = "Parasite",
+                    ReleaseYear = 2019,
+                    Description = "Greed and class discrimination threaten the symbiotic relationship between a wealthy family and a poor one.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg"
+                },
+                new Movie
+                {
+                    Id = 17,
+                    Title = "Avengers: Endgame",
+                    ReleaseYear = 2019,
+                    Description = "After the devastating events of Infinity War, the Avengers assemble once more to undo Thanos's actions.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/or06FN3Dka5tukK1e9sl16pB3iy.jpg"
+                },
+                new Movie
+                {
+                    Id = 18,
+                    Title = "The Silence of the Lambs",
+                    ReleaseYear = 1991,
+                    Description = "A young FBI cadet must confide in an incarcerated and manipulative killer to receive his help on catching another serial killer.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/uS9m8OBk1A8eM9I042bx8XXpqAq.jpg"
+                },
+                new Movie
+                {
+                    Id = 19,
+                    Title = "The Green Mile",
+                    ReleaseYear = 1999,
+                    Description = "The lives of guards on Death Row are affected by one of their charges: a black man accused of child murder and rape, yet who has a mysterious gift.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/sOHqdY1RnSn6kcfAHKu28jvTebE.jpg"
+                },
+                new Movie
+                {
+                    Id = 20,
+                    Title = "The Truman Show",
+                    ReleaseYear = 1998,
+                    Description = "An insurance salesman discovers his whole life is actually a reality TV show broadcast to the world.",
+                    ImageUrl = "https://image.tmdb.org/t/p/original/euDPyqLnuwaWMHajcU3oZ9uZezR.jpg"
                 }
             );
 

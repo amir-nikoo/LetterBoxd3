@@ -82,7 +82,7 @@ namespace LetterBoxdContext
                     Title = "Interstellar",
                     ReleaseYear = 2014,
                     Description = "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg"
+                    ImageUrl = "https://m.media-amazon.com/images/I/71i-lmidyGL._AC_SL1500_.jpg"
                 },
                 new Movie
                 {
@@ -170,7 +170,7 @@ namespace LetterBoxdContext
                     Title = "The Truman Show",
                     ReleaseYear = 1998,
                     Description = "An insurance salesman discovers his whole life is actually a reality TV show broadcast to the world.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/euDPyqLnuwaWMHajcU3oZ9uZezR.jpg"
+                    ImageUrl = "https://m.media-amazon.com/images/I/91AJYESZaVL._AC_SL1500_.jpg"
                 }
             );
 

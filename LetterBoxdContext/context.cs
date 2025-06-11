@@ -138,7 +138,7 @@ namespace LetterBoxdContext
                     Title = "Parasite",
                     ReleaseYear = 2019,
                     Description = "Greed and class discrimination threaten the symbiotic relationship between a wealthy family and a poor one.",
-                    ImageUrl = "https://www.artymag.ir/media/zgalleries/05c0c73e79108a0bd4bef06e191b6584/parasite28.jpg"
+                    ImageUrl = "https://cdn11.bigcommerce.com/s-yzgoj/images/stencil/1280x1280/products/2873628/5940935/MOVEB48955__98081.1679587033.jpg?c=2"
                 },
                 new Movie
                 {
@@ -170,7 +170,7 @@ namespace LetterBoxdContext
                     Title = "The Truman Show",
                     ReleaseYear = 1998,
                     Description = "An insurance salesman discovers his whole life is actually a reality TV show broadcast to the world.",
-                    ImageUrl = "https://sinarium.com/wp-content/uploads/2022/04/15-6.jpg"
+                    ImageUrl = "https://m.media-amazon.com/images/I/91AJYESZaVL._AC_UF894,1000_QL80_.jpg"
                 }
             );
 

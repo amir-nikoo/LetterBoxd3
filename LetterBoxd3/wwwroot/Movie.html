@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="Cache-Control" content="no-store" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Movie Details - LetterBoxd Clone</title>
+    <title>Movie Details - LetterBoxd3</title>
+    <link rel="icon" href="https://s.ltrbxd.com/static/img/touch-icon-192x192-lO1g3Ot4.png" type="image/png" />
     <style>
         body {
             position: relative;
@@ -263,7 +264,7 @@
                     titleEl.textContent = movie.title;
                     document.getElementById('release-year').textContent = `${movie.releaseYear}`;
                     descEl.textContent = movie.description;
-                    avgRatingEl.textContent = movie.averageRating ? movie.averageRating.toFixed(1) : '-';
+                    avgRatingEl.textContent = movie.averageRating ? movie.averageRating.toFixed(1) : 'Not yet rated';
 
                     const posterEl = document.getElementById('movie-poster');
                     if (movie.imageUrl) {
@@ -288,6 +289,10 @@
                     const comments = await res.json();
 
                     commentListEl.innerHTML = '';
+                    if (comments.length === 0) {
+                        commentListEl.innerHTML = '<p style="color: #e0e0e0;">No comments yet. Be the first to comment!</p>';
+                        return;
+                    }
                     comments.forEach(comment => {
                         const div = document.createElement('div');
                         div.className = 'comment-item';

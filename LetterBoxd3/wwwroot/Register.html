@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-store" />
-    <title>Register - LetterBoxd Clone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register - LetterBoxd3</title>
+    <link rel="icon" href="https://s.ltrbxd.com/static/img/touch-icon-192x192-lO1g3Ot4.png" type="image/png" />
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -131,7 +133,6 @@
             button.disabled = true;
             const originalText = button.textContent;
             button.textContent = "Registering...";
-            messageEl.textContent = "Analyzing your input...";
 
             try {
                 const response = await fetch("https://letterboxd3.onrender.com/api/register", {

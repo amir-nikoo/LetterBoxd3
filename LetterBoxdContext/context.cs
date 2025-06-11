@@ -138,7 +138,7 @@ namespace LetterBoxdContext
                     Title = "Parasite",
                     ReleaseYear = 2019,
                     Description = "Greed and class discrimination threaten the symbiotic relationship between a wealthy family and a poor one.",
-                    ImageUrl = "https://cdn11.bigcommerce.com/s-yzgoj/images/stencil/1280x1280/products/2873628/5940935/MOVEB48955__98081.1679587033.jpg?c=2"
+                    ImageUrl = "https://m.media-amazon.com/images/I/91KArYP03YL._AC_UF894,1000_QL80_.jpg"
                 },
                 new Movie
                 {

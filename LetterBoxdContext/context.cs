@@ -42,7 +42,7 @@ namespace LetterBoxdContext
                     Title = "The Godfather",
                     ReleaseYear = 1972,
                     Description = "The aging patriarch of an organized crime dynasty transfers control to his reluctant son.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/3bhkrj58Vtu7enYsRolD1fZdja1.jpg"
+                    ImageUrl = "https://malltina.com/mag/wp-content/uploads/2019/03/The-Godfather-1082x1536.jpg"
                 },
                 new Movie
                 {
@@ -50,7 +50,7 @@ namespace LetterBoxdContext
                     Title = "Inception",
                     ReleaseYear = 2010,
                     Description = "A thief who steals corporate secrets through dream-sharing is given the inverse task of planting an idea.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg"
+                    ImageUrl = "https://malltina.com/mag/wp-content/uploads/2019/03/Inception_poster-500x740.jpg"
                 },
                 new Movie
                 {
@@ -58,7 +58,7 @@ namespace LetterBoxdContext
                     Title = "The Dark Knight",
                     ReleaseYear = 2008,
                     Description = "Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
+                    ImageUrl = "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_FMjpg_UX1000_.jpg"
                 },
                 new Movie
                 {
@@ -66,7 +66,7 @@ namespace LetterBoxdContext
                     Title = "Pulp Fiction",
                     ReleaseYear = 1994,
                     Description = "The lives of two mob hitmen, a boxer, and others intertwine in tales of violence and redemption.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg"
+                    ImageUrl = "https://m.media-amazon.com/images/M/MV5BYTViYTE3ZGQtNDBlMC00ZTAyLTkyODMtZGRiZDg0MjA2YThkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
                 },
                 new Movie
                 {
@@ -74,7 +74,7 @@ namespace LetterBoxdContext
                     Title = "The Matrix",
                     ReleaseYear = 1999,
                     Description = "A computer hacker learns the true nature of reality and his role in the war against its controllers.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg"
+                    ImageUrl = "https://m.media-amazon.com/images/M/MV5BN2NmN2VhMTQtMDNiOS00NDlhLTliMjgtODE2ZTY0ODQyNDRhXkEyXkFqcGc@._V1_.jpg"
                 },
                 new Movie
                 {
@@ -82,7 +82,7 @@ namespace LetterBoxdContext
                     Title = "Interstellar",
                     ReleaseYear = 2014,
                     Description = "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
-                    ImageUrl = "https://m.media-amazon.com/images/I/71i-lmidyGL._AC_SL1500_.jpg"
+                    ImageUrl = "https://malltina.com/mag/wp-content/uploads/2019/03/32-500x714.jpeg"
                 },
                 new Movie
                 {
@@ -90,7 +90,7 @@ namespace LetterBoxdContext
                     Title = "Fight Club",
                     ReleaseYear = 1999,
                     Description = "An insomniac office worker and a soapmaker form an underground fight club that evolves into something more.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/bptfVGEQuv6vDTIMVCHjJ9Dz8PX.jpg"
+                    ImageUrl = "https://m.media-amazon.com/images/M/MV5BOTgyOGQ1NDItNGU3Ny00MjU3LTg2YWEtNmEyYjBiMjI1Y2M5XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
                 },
                 new Movie
                 {
@@ -98,7 +98,7 @@ namespace LetterBoxdContext
                     Title = "Forrest Gump",
                     ReleaseYear = 1994,
                     Description = "Forrest Gump, a man with a low IQ, recounts the early years of his life when he found himself in the middle of key historical events.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg"
+                    ImageUrl = "https://malltina.com/mag/wp-content/uploads/2019/03/71CHZi4vhWL._SL1500_-500x750.jpg"
                 },
                 new Movie
                 {
@@ -106,7 +106,7 @@ namespace LetterBoxdContext
                     Title = "The Shawshank Redemption",
                     ReleaseYear = 1994,
                     Description = "Two imprisoned men bond over years, finding solace and redemption through acts of decency.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg"
+                    ImageUrl = "https://malltina.com/mag/wp-content/uploads/2019/03/the-shawshank-redemption.jpg"
                 },
                 new Movie
                 {
@@ -114,7 +114,7 @@ namespace LetterBoxdContext
                     Title = "Gladiator",
                     ReleaseYear = 2000,
                     Description = "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg"
+                    ImageUrl = "https://malltina.com/mag/wp-content/uploads/2019/03/48-500x741.jpg"
                 },
                 new Movie
                 {
@@ -122,7 +122,7 @@ namespace LetterBoxdContext
                     Title = "The Lion King",
                     ReleaseYear = 1994,
                     Description = "Lion prince Simba and his father are targeted by his bitter uncle, who wants to ascend the throne himself.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg"
+                    ImageUrl = "https://malltina.com/mag/wp-content/uploads/2019/03/45-500x743.jpg"
                 },
                 new Movie
                 {
@@ -130,7 +130,7 @@ namespace LetterBoxdContext
                     Title = "Coco",
                     ReleaseYear = 2017,
                     Description = "Aspiring musician Miguel enters the Land of the Dead to find his great-great-grandfather, a legendary singer.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg"
+                    ImageUrl = "https://api2.zoomg.ir/media/2017-9-f6134586-1165-48cd-82fd-66ddbc25d776-66cc7cff2b5676090d006b91?w=1920&q=80"
                 },
                 new Movie
                 {
@@ -138,7 +138,7 @@ namespace LetterBoxdContext
                     Title = "Parasite",
                     ReleaseYear = 2019,
                     Description = "Greed and class discrimination threaten the symbiotic relationship between a wealthy family and a poor one.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg"
+                    ImageUrl = "https://www.artymag.ir/media/zgalleries/05c0c73e79108a0bd4bef06e191b6584/parasite28.jpg"
                 },
                 new Movie
                 {
@@ -146,7 +146,7 @@ namespace LetterBoxdContext
                     Title = "Avengers: Endgame",
                     ReleaseYear = 2019,
                     Description = "After the devastating events of Infinity War, the Avengers assemble once more to undo Thanos's actions.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/or06FN3Dka5tukK1e9sl16pB3iy.jpg"
+                    ImageUrl = "https://api2.zoomg.ir/media/2019-7-3170707f-e771-4f73-a721-92061b25df87-66cc7d052b5676090d015469?w=1920&q=80"
                 },
                 new Movie
                 {
@@ -154,7 +154,7 @@ namespace LetterBoxdContext
                     Title = "The Silence of the Lambs",
                     ReleaseYear = 1991,
                     Description = "A young FBI cadet must confide in an incarcerated and manipulative killer to receive his help on catching another serial killer.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/uS9m8OBk1A8eM9I042bx8XXpqAq.jpg"
+                    ImageUrl = "https://malltina.com/mag/wp-content/uploads/2019/03/24-1-500x738.jpg"
                 },
                 new Movie
                 {
@@ -162,7 +162,7 @@ namespace LetterBoxdContext
                     Title = "The Green Mile",
                     ReleaseYear = 1999,
                     Description = "The lives of guards on Death Row are affected by one of their charges: a black man accused of child murder and rape, yet who has a mysterious gift.",
-                    ImageUrl = "https://image.tmdb.org/t/p/original/sOHqdY1RnSn6kcfAHKu28jvTebE.jpg"
+                    ImageUrl = "https://upload.wikimedia.org/wikipedia/fa/thumb/c/ce/Green_mile.jpg/250px-Green_mile.jpg"
                 },
                 new Movie
                 {
@@ -170,7 +170,7 @@ namespace LetterBoxdContext
                     Title = "The Truman Show",
                     ReleaseYear = 1998,
                     Description = "An insurance salesman discovers his whole life is actually a reality TV show broadcast to the world.",
-                    ImageUrl = "https://m.media-amazon.com/images/I/91AJYESZaVL._AC_SL1500_.jpg"
+                    ImageUrl = "https://sinarium.com/wp-content/uploads/2022/04/15-6.jpg"
                 }
             );
 
